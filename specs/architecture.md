@@ -60,7 +60,7 @@ Listener rules:
 - **Logging**: connect, disconnect with reason, resubscribe count, skipped malformed and stale messages.
 - **Backoff**: 1s, 2s, 4s, doubling to a 30s cap, with ±20% jitter.
 - **Broadcast failure**: log and continue. The row is already updated, so the next page load is correct.
-- **Broadcast timeout**: broadcasting from the listener is a blocking HTTP call to Reverb inside the event loop. `broadcasting.connections.reverb.client_options.timeout` is set to 2 seconds so a slow Reverb cannot starve the PING timer.
+- **Broadcast timeout**: broadcasting from the listener is a blocking HTTP call to Reverb inside the event loop. `broadcasting.connections.reverb.client_options` sets `connect_timeout` and `timeout` to 2 seconds so a slow or unreachable Reverb cannot starve the PING timer.
 
 ### Broadcasting (R5)
 
@@ -73,7 +73,7 @@ Listener rules:
 
 ### Configuration
 
-`config/services.php` gets `figure_markets.rest_url` and `figure_markets.ws_url` from `FIGURE_MARKETS_REST_URL` and `FIGURE_MARKETS_WS_URL`. `.env.example` carries the UAT values. Reverb variables come from the broadcasting install.
+`config/services.php` gets `figure_markets.rest_url` and `figure_markets.ws_url` from `FIGURE_MARKETS_REST_URL` and `FIGURE_MARKETS_WS_URL`, defaulting to the UAT URLs. The variables are not listed in `.env.example`; set them to switch to production. Reverb variables come from the broadcasting install.
 
 ## Failure handling (R9)
 

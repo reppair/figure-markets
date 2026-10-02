@@ -16,12 +16,11 @@ Install and verify everything the feature phases depend on. No application code 
 |---|------|--------|--------|
 | 1 | Install broadcasting with Reverb: `php artisan install:broadcasting --reverb`. Run in a real terminal; the Node step needs a TTY. | `config/broadcasting.php`, `routes/channels.php`, `resources/js/echo.js` exist; Reverb env vars in `.env` and `.env.example`. | done |
 | 2 | `composer require ratchet/pawl` | Resolves alongside Reverb on PHP 8.4. | done |
-| 3 | `config/services.php`: `figure_markets.rest_url`, `figure_markets.ws_url` from `FIGURE_MARKETS_REST_URL`, `FIGURE_MARKETS_WS_URL`. UAT values in `.env.example`. | `php artisan config:show services.figure_markets` | todo |
-| 4 | `broadcasting.connections.reverb.client_options.timeout = 2` | Config value present. | todo |
-| 5 | `composer run dev` | `reverb:start` runs; dashboard loads; Echo connects (browser console, Reverb output). | todo |
-| 6 | Capture fixtures into `tests/Fixtures/figure-markets/`: `markets.json` (one `GET /markets` page), `market-snapshot.json`, `market-update.json` (one WS snapshot, one WS update). Capture script is throwaway, not committed. | Files present, valid JSON, field names match [statement-of-work.md](../statement-of-work.md). | todo |
-| 7 | `composer test` and `npm run build` | Green. | todo |
-| 8 | README "Development": list the processes `composer run dev` starts. | README updated. | todo |
+| 3 | `config/services.php`: `figure_markets.rest_url`, `figure_markets.ws_url` default to the UAT URLs, overridable by `FIGURE_MARKETS_REST_URL`, `FIGURE_MARKETS_WS_URL`. Nothing in `.env.example`. | `php artisan config:show services.figure_markets` | done |
+| 4 | `composer run dev` | `reverb:start` runs; dashboard loads; Echo connects (browser console, Reverb output). | todo |
+| 5 | Capture fixtures into `tests/Fixtures/figure-markets/`: `markets.json` (one `GET /markets` page), `market-snapshot.json`, `market-update.json` (one WS snapshot, one WS update). Capture script is throwaway, not committed. | Files present, valid JSON, field names match [statement-of-work.md](../statement-of-work.md). | todo |
+| 6 | `composer test` and `npm run build` | Green. | todo |
+| 7 | README "Development": list the processes `composer run dev` starts. | README updated. | todo |
 
 ## Notes
 

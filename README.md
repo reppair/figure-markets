@@ -41,6 +41,10 @@ composer setup
 
 Runs `composer install`, copies `.env.example` to `.env`, generates the app key, migrates the SQLite database, installs npm dependencies and builds assets.
 
+## Configuration
+
+The Figure Markets provider URLs live in `config/services.php` under `figure_markets` and default to the UAT environment, so no environment variables are needed to run locally. To use production, set `FIGURE_MARKETS_REST_URL` and `FIGURE_MARKETS_WS_URL` in `.env`; the values are listed in the [statement of work](specs/statement-of-work.md#external-interface).
+
 ## Development
 
 ```bash

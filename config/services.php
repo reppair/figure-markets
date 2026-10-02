@@ -28,6 +28,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'figure_markets' => [
+        'rest_url' => env('FIGURE_MARKETS_REST_URL', 'https://www.figuremarkets.dev/service-hft-exchange/api/v1'),
+        'ws_url' => env('FIGURE_MARKETS_WS_URL', 'wss://www.figuremarkets.dev/service-hft-exchange-websocket/ws/v1'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

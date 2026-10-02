@@ -121,3 +121,33 @@ Software design decisions made while building, in the order they were taken. The
 - **Decision**: `App\Events\MarketUpdated` is created with the listener: `ShouldBroadcastNow`, `PrivateChannel('markets')`, `broadcastAs()` `market.updated`, `broadcastWith()` is `$market->toArray()`, which includes `id`. `broadcasting.connections.reverb.client_options` gets the 2-second `connect_timeout` and `timeout`. Phase 5 adds channel authorization, the component and the demo user.
 - **Considered**: a plain event in phase 4, broadcasting added in phase 5.
 - **Why**: the listener dispatches the event and its tests assert the dispatch, so the class belongs to this phase. Completing it here lets the listener be smoke-tested end to end against Reverb at the end of phase 4 instead of a phase later.
+
+## 21. Cards re-query on the broadcast, no polling, no DOM patching
+
+- **Decision**: `MarketStats` listens with `#[On('echo-private:markets,.market.updated')]`. A matching event lets Livewire re-render the component, and the computed `market()` re-queries the row the listener already wrote. The event payload is only used for its `id`.
+- **Considered**: `wire:poll` on the card; Alpine or a component `<script>` writing the payload fields into the DOM without a request.
+- **Why**: polling is timed, delayed and ruled out by the architecture. Patching from the payload saves one request per tick but runs only in a browser, so it would need browser tests; the server-side listener is driven in a feature test with `dispatch()` and `assertRenderSkipped()`. The request the browser sends per update is triggered by the push, never by a timer. The trade-off is listed in the architecture: switch to patching when the tick rate or client count makes the round trip matter.
+
+## 22. One child component per watched market, not islands
+
+- **Decision**: `MarketWatch` renders one `MarketStats` per checked symbol in a `@foreach` keyed by the symbol. Each child owns its Echo listener and calls `skipRender()` when the event id is not its market. The parent never re-renders on a tick.
+- **Considered**: one component with the stats inside a Livewire 4 `@island`.
+- **Why**: an `#[On]` Echo listener is a component-level action and re-renders the whole component; only a template `wire:island` or a JavaScript `$wire.$island()` call scopes a request to an island, which brings back the hand-written Echo script decision 21 avoids. Islands cannot sit in `@foreach`, so several watched markets would share one island and re-render together. A keyed child per item is the documented pattern for independent list entries.
+
+## 23. Checkbox group, no URL state, first market pre-checked
+
+- **Decision**: `MarketWatch` holds `public array $symbols` bound to a `flux:checkbox.group`. `mount()` checks the first open market by symbol. `render()` intersects the selection with the open markets so a closed or unknown symbol is dropped. Nothing checked shows a hint; an empty table shows a callout naming `php artisan market:sync`.
+- **Considered**: a single select with `#[Url]`; falling back to the first market whenever the selection is empty.
+- **Why**: the brief asks for selecting a market; several cards cost one checkbox group once the child component exists and show the per-card filter at work. URL state added a serialization format and a stale-bookmark case for no requirement. Re-checking the first market after the user unchecks everything would fight the user, so the empty selection shows the hint instead.
+
+## 24. Display rules live in `MarketStats`
+
+- **Decision**: prices (last, bid, ask, high, low, 24h change) use `number_format` at the market's `price_precision`; percentage two decimals with `%`; volume eight decimals with trailing zeros trimmed; trade count with a thousands separator; `price_updated_at` absolute as `Y-m-d H:i:s UTC`. Null renders `—`; the provider's zero on an untraded market renders as a formatted zero. The formatting methods are on the component, the view loops a `label => value` list through an anonymous `market-stat` Blade component.
+- **Considered**: a relative "n seconds ago" timestamp; accessors on the `Market` model; a formatter class.
+- **Why**: a relative time goes stale between ticks because the card renders only on its own updates. Zero is what the provider reports, a dash would claim the value is missing (decision 8). The model stays presentation-free and a formatter class would be one more file for five one-line methods used in one place.
+
+## 25. Demo user through `composer run setup`, channel open to any login
+
+- **Decision**: `DatabaseSeeder` uses `User::firstOrCreate` on `demo@example.com` with name `Demo User` and the factory password `password`; the `setup` composer script runs `migrate --force --seed`. `routes/channels.php` authorizes `markets` with `fn () => true`.
+- **Considered**: credentials from `.env`; a separate seeder class; a public channel and a public page without login.
+- **Why**: the dashboard sits behind the starter kit's login, so a reviewer needs a working account from the install command alone; `firstOrCreate` makes the seed idempotent. Nothing here is secret or environment-specific. The private channel keeps the one authorization callback the architecture asks for; the broadcasting auth route rejects guests before it runs, so returning `true` is the whole rule.

@@ -27,7 +27,7 @@ Two feeds, one table, one normalizer per feed. The REST sync fills the market li
 | 8 | Disappeared markets | A market missing from the REST list is marked `status = closed`, never deleted | Keeps rows and history of what existed; the UI lists open markets only. |
 | 9 | Frontend updates | Livewire component with an Echo listener, re-render per update (filter rule under Frontend below) | No custom JavaScript, testable with Livewire helpers. One roundtrip per update is fine at event-driven rates. |
 | 10 | Access | Behind the existing login, one private `markets` channel, demo user seeded for local use | Matches the auth-gated dashboard. Channel authorization is one callback. `DatabaseSeeder` creates a demo user; README and `.env.example` mark it local-only. |
-| 11 | Channel layout | Single `PrivateChannel('markets')` for all updates | Livewire registers Echo listeners once at mount, so a per-market dynamic channel would not follow the selected market. One channel also avoids symbols with dots in channel names. Per-market channels when client count or tick rate grows. |
+| 11 | Channel layout | Single `PrivateChannel('markets')` for all updates | One authorization callback, no symbols with dots in channel names. Every card receives every update and skips the render for other markets. Per-market channels when client count or tick rate grows. |
 | 12 | Provider environment | UAT by default, production via environment variables | Safe default against rate limits; one config change to switch. |
 | 13 | Broadcast dispatch | `ShouldBroadcastNow` from the listener | No queue worker needed for broadcasting. |
 | 14 | Session cap | Rely on the server closing the connection at 30 minutes, then reconnect with backoff | Proactive reconnect is a later improvement. |
@@ -69,7 +69,8 @@ Listener rules:
 
 ### Frontend (R3, R8)
 
-- **`App\Livewire\MarketWatch`** on the dashboard. A select bound to `$symbol`, kept in the URL with `#[Url]`, loads the market from the database. The component listens on `echo-private:markets,.market.updated` and re-queries the market when the payload `id` matches the selected one; other updates are ignored. Shows last price, bid, ask, 24h high, low, volume, and when the price was last updated.
+- **`App\Livewire\MarketWatch`** on the dashboard. A checkbox group bound to `$symbols` lists the open markets; the first one is checked on mount; no URL state. One `MarketStats` child per checked symbol, keyed by symbol.
+- **`App\Livewire\MarketStats`** takes a symbol, loads the market through a computed property and listens on `echo-private:markets,.market.updated`. When the payload `id` matches its market it re-renders and so re-queries the row; otherwise it skips the render. Shows last price with 24h change, bid, ask, 24h high, low, volume, trade count, and when the price was last updated.
 
 ### Configuration
 
@@ -95,12 +96,12 @@ In order of importance:
 2. `RestClient` with `Http::fake`: request shape, retry, failure. `SyncMarketsAction` with a mocked client: write, closing absent markets, failure path.
 3. `HandleMarketUpdateAction`: given a decoded update, the row is updated, stale, unknown and malformed updates are skipped, and `MarketUpdated` is dispatched (`Event::fake`). `Backoff` arithmetic. The socket lifecycle itself is not unit-tested (design decision 18).
 4. `MarketUpdated` channel and payload shape.
-5. `MarketWatch`: requires login, lists open markets from factories, selecting a market shows it, an update for the selected id refreshes it, an update for another id does not.
+5. `MarketWatch`: requires login, lists open markets from factories, checking a market renders its card. `MarketStats`: formatting, null and zero display, an update for its id re-renders, an update for another id skips the render.
 6. `market:sync` command smoke test.
 
 ## Running
 
-`composer run dev` starts the web server, queue, log tail, Vite, `reverb:start` and `market:listen`. SQLite database. Log in with the seeded demo user.
+`composer run setup` installs, migrates and seeds the demo user. `composer run dev` starts the web server, queue, log tail, Vite, `reverb:start` and `market:listen`. SQLite database. Log in with the seeded demo user.
 
 ## Trade-offs
 

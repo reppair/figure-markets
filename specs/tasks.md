@@ -8,5 +8,5 @@ Build order for the design in [architecture.md](architecture.md). One feature sp
 | 2 | Market model, table, factory, REST and WebSocket payloads | [features/02-market-model.md](features/02-market-model.md) | done |
 | 3 | `RestClient`, `SyncMarketsAction`, `market:sync` | [features/03-market-sync.md](features/03-market-sync.md) | done |
 | 4 | `market:listen` provider WebSocket listener, `MarketUpdated` event | [features/04-market-listen.md](features/04-market-listen.md) | done |
-| 5 | Channel auth, `MarketWatch` component, demo user | features/05-market-watch.md | todo |
+| 5 | Channel auth, `MarketWatch` and `MarketStats` components, demo user | [features/05-market-watch.md](features/05-market-watch.md) | in progress |
 | 6 | README: run, assumptions, gaps, improvements | features/06-readme.md | todo |

@@ -47,10 +47,10 @@ Identity columns are required. Every live column is nullable and commented as su
 
 ### Provider integration (R1, R2, R4)
 
-- **`App\Services\FigureMarkets\RestClient`**: `Http` facade with timeout and retry. Base URL from `config('services.figure_markets.rest_url')`. `markets()` walks pagination.
+- **`App\Services\FigureMarkets\RestClient`**: `Http` facade with timeout and retry. Base URL from `config('services.figure_markets.rest_url')`. `markets()` makes one `GET /markets?size=50` request and returns the raw records; page walking is a later improvement (design decision 12).
 - **`App\Services\FigureMarkets\RestMarketPayload`** and **`WebSocketMarketPayload`**: the normalizers, one per source, no shared base (design decision 2). Each maps a provider array to `Market` attributes and throws `MalformedMarketPayload` on a missing required key (decision 3). The only classes that know provider field names.
-- **`App\Actions\SyncMarkets`**: REST → normalize → upsert by `symbol`, then mark markets absent from the response as `closed`. Never writes `price_updated_at`. Called by the `market:sync` command and the listener at start.
-- **`App\Console\Commands\ListenToMarkets`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own UUID `channelUuid`, send a WebSocket ping frame every 20 seconds (the provider rejects text pings). On each message: normalize, skip if stale, upsert the row, then dispatch `MarketUpdated`. On close or error: reconnect with backoff and resubscribe. Registered with `DevCommands` so `composer run dev` starts it.
+- **`App\Actions\SyncMarketsAction`**: REST → normalize all records → `updateOrCreate` by `symbol`, then mark markets absent from the response as `closed`. Never writes `price_updated_at`. Called by the `market:sync` command and the listener at start.
+- **`App\Console\Commands\ListenToMarketsCommand`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own UUID `channelUuid`, send a WebSocket ping frame every 20 seconds (the provider rejects text pings). On each message: normalize, skip if stale, upsert the row, then dispatch `MarketUpdated`. On close or error: reconnect with backoff and resubscribe. Registered with `DevCommands` so `composer run dev` starts it.
 
 Listener rules:
 
@@ -80,7 +80,7 @@ Listener rules:
 | Failure | Behaviour |
 |---------|-----------|
 | REST unavailable at sync | Log, keep existing rows, listener subscribes to what exists. Retry with backoff while the table is empty. |
-| REST returns 429 | Respect `Retry-After` when present, otherwise the listener backoff. Keep existing rows. |
+| REST returns 429 | Fails the sync like any other error after the client's retries; the listener backoff spaces the next attempt. Keep existing rows. `Retry-After` is a later improvement (design decision 13). |
 | Provider WebSocket drops or the 30-minute cap closes it | Reconnect with backoff, resubscribe all symbols. |
 | Malformed or stale update | Log and skip. |
 | Broadcast to Reverb fails | Log and continue. |
@@ -92,7 +92,7 @@ Listener rules:
 In order of importance:
 
 1. `RestMarketPayload` and `WebSocketMarketPayload`: REST record and WebSocket update to attributes, using fixtures captured from the UAT API under `tests/Fixtures/figure-markets/`.
-2. `SyncMarkets` with `Http::fake`: pagination, upsert, closing absent markets, failure path.
+2. `RestClient` with `Http::fake`: request shape, retry, failure. `SyncMarketsAction` with a mocked client: write, closing absent markets, failure path.
 3. Update handling extracted from the socket loop: given a decoded update, the row is updated, stale updates are skipped, and `MarketUpdated` is dispatched (`Event::fake`). The socket lifecycle itself is not unit-tested.
 4. `MarketUpdated` channel and payload shape.
 5. `MarketWatch`: requires login, lists open markets from factories, selecting a market shows it, an update for the selected id refreshes it, an update for another id does not.
@@ -115,5 +115,6 @@ In order of importance:
 
 - Deployment. Laravel Cloud would fit: managed Reverb, Serverless Postgres, `database` cache and session drivers, `market:listen` as an always-on background process with scale-to-zero disabled.
 - Hourly scheduled `market:sync`.
+- REST pagination walking and `Retry-After` handling on 429.
 - Proactive reconnect before the session cap.
 - Snapshot history table, per-user on-demand subscriptions, metrics.

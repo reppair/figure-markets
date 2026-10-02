@@ -18,7 +18,7 @@ Software design decisions made while building, in the order they were taken. The
 
 - **Decision**: a payload's named constructor throws `App\Services\FigureMarkets\MalformedMarketPayload` when a required key is missing. Required keys: `symbol` for REST; `marketId` and `publishTime` for WebSocket, because the stale guard depends on the timestamp. Every other field defaults to null when absent.
 - **Considered**: returning null and letting callers check.
-- **Why**: callers decide what a bad payload means for them. The listener catches, logs and skips one message. `SyncMarkets` lets it bubble so a broken REST response fails the whole sync and keeps the existing rows. Null returns would spread the same check across every caller and lose the reason.
+- **Why**: callers decide what a bad payload means for them. The listener catches, logs and skips one message. `SyncMarketsAction` lets it bubble so a broken REST response fails the whole sync and keeps the existing rows. Null returns would spread the same check across every caller and lose the reason.
 
 ## 4. Numeric column types
 
@@ -67,3 +67,27 @@ Software design decisions made while building, in the order they were taken. The
 - **Decision**: `Market` sets `#[Table(dateFormat: 'Y-m-d H:i:s.u')]` so `price_updated_at` keeps microseconds when written. The same format applies to `created_at` and `updated_at`.
 - **Considered**: leaving Eloquent's default `Y-m-d H:i:s`, which silently truncated the timestamp to whole seconds in the first model test.
 - **Why**: decision 5 requires microsecond precision for the stale guard, and the column is `timestamp(6)`; without the model format the precision existed only in the schema. One attribute on the model is the smallest change that makes writes match the column.
+
+## 12. The REST client requests one page and returns raw records
+
+- **Decision**: `RestClient::markets()` sends one `GET /markets?size=50` and returns the `data` array as received. `SyncMarketsAction` maps each record through `RestMarketPayload::fromRecord()`. The client knows only the response envelope; the payload class stays the only place that knows market field names.
+- **Considered**: walking `pagination.totalPages` with a `LazyCollection`; returning `RestMarketPayload` instances from the client.
+- **Why**: simplicity. UAT has 16 visible markets and production 17, both under the page cap of 50. Page walking is code without a case to exercise it, listed under later improvements in the architecture and the README. Returning payloads from the client would spread provider field knowledge across two classes.
+
+## 13. Plain retry, no `Retry-After`
+
+- **Decision**: `RestClient` uses `Http::baseUrl()->timeout(10)->retry(3, 500)`. Timeout and retry values are constants on the class. `retry()` throws `RequestException` itself on the last failed attempt, so no `throw()` call. A 429 fails the sync like any other error once the retries are spent; existing rows stay and the caller logs. Laravel's `ConnectionException` and `RequestException` bubble unwrapped.
+- **Considered**: a sleep closure on `retry()` that reads `Retry-After` on 429; a domain `ProviderUnavailable` exception wrapping both.
+- **Why**: the statement of work asks (R9) that a REST failure keeps existing data and is logged, nothing about rate-limit headers. Sync runs once at listener start and on demand, and the listener's backoff already spaces retries on an empty table. A wrapper exception would have no caller branching on it.
+
+## 14. Sync normalizes everything first, then writes each market through the model
+
+- **Decision**: `SyncMarketsAction::handle(): int` maps all records to payloads before the first write, so a `MalformedMarketPayload` fails the sync with the table untouched (decision 3). Each payload is written with `Market::updateOrCreate(['symbol' => ...], $attributes)`, then one `update` sets `status = closed` on open markets whose symbol is absent from the response. Returns the number of records written. No logging inside the action; the command and the listener decide what a failure means. A 200 with zero records closes every market.
+- **Considered**: one `Market::upsert()` by `symbol`; catching `MalformedMarketPayload` per record, logging and skipping it; a result object with synced and closed counts; a guard that treats zero records as a failure.
+- **Why**: `updateOrCreate` fires model events and writes through the model, which a bulk upsert skips; sixteen rows do not need one statement. Skipping a malformed record would silently close that market in the next step, so failing the whole sync is the honest outcome. The command prints only the synced count, so an int is enough. The provider has never returned an empty list; guarding it is handling an edge case without evidence.
+
+## 15. `market:sync` catches, reports and exits non-zero
+
+- **Decision**: the command calls the action, prints `Synced N markets.` and returns success. On any `Throwable` it calls `report()`, prints one error line and returns failure.
+- **Considered**: letting the exception propagate to Laravel's handler, which also logs and exits 1.
+- **Why**: decision 3 puts the failure decision with the caller. Catching in the command mirrors what the listener does in phase 4 (catch, log, back off), and gives a one-line message instead of a stack trace.

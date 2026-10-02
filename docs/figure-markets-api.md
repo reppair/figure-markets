@@ -67,7 +67,7 @@ Captured from UAT into `tests/Fixtures/figure-markets/` with a throwaway Pawl sc
 
 | File | Source | Use |
 |------|--------|-----|
-| `markets.json` | `GET /markets`, full page of 16 markets | `RestMarketPayload` normalization, `SyncMarkets` with `Http::fake`, pagination shape |
+| `markets.json` | `GET /markets`, full page of 16 markets | `RestMarketPayload` normalization, `RestClient` with `Http::fake`, `SyncMarketsAction` records |
 | `market-snapshot.json` | First `MARKET` message for `HASH-USD`, with `bestBid` and `bestAsk` | `WebSocketMarketPayload` normalization, update handling |
 | `market-update.json` | Second `MARKET` message for `HASH-USD`, later `publishTime` | Stale guard and broadcast tests, paired with the snapshot |
 | `market-snapshot-no-book.json` | First `MARKET` message for `FIGR_HELOC-USD`, no `bestBid` or `bestAsk` | Nullable bid and ask handling |

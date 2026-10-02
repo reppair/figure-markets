@@ -26,7 +26,7 @@ class MarketUpdated implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('markets'),
+            new PrivateChannel("markets.{$this->market->id}"),
         ];
     }
 

@@ -11,6 +11,7 @@ Demo application showing real-time cryptocurrency market prices from the public 
 - [Data model](docs/data-model.md): the markets table, model, status enum, payload classes and factory.
 - [Market sync](docs/market-sync.md): what `market:sync` writes, how it fails, and the pagination and rate-limit gaps.
 - [Market listener](docs/market-listen.md): the `market:listen` lifecycle, what each provider message does, broadcast shape, failure behaviour.
+- [Market watch](docs/market-watch.md): the dashboard components, per-market subscription, what the card shows, access and the demo user.
 
 ## Stack
 
@@ -36,15 +37,15 @@ Added on top of the starter kit, each tied to a requirement in the [statement of
 - **`ratchet/pawl`**: WebSocket client for the backend connection to the provider feed (R2, R7). Laravel ships no WebSocket client; Pawl builds on `react/socket` and `ratchet/rfc6455`, which Reverb already depends on, so it adds no further transitive dependencies.
 - **Guzzle 7**: Reverb 1.x requires `guzzlehttp/psr7` 2.x, so the installer downgraded Guzzle from 8 to 7. Laravel 13 supports both.
 
-The Reverb variables in `.env.example` are local-only defaults so the app runs right after `composer setup`.
+The Reverb variables in `.env.example` are local-only defaults so the app runs right after `composer run setup`.
 
 ## Setup
 
 ```bash
-composer setup
+composer run setup
 ```
 
-Runs `composer install`, copies `.env.example` to `.env`, generates the app key, migrates the SQLite database, installs npm dependencies and builds assets.
+Runs `composer install`, copies `.env.example` to `.env`, generates the app key, migrates and seeds the SQLite database, installs npm dependencies and builds assets. The seed creates the local demo login `demo@example.com` / `password`; it is idempotent and not meant for a deployment.
 
 ## Configuration
 
@@ -56,7 +57,7 @@ The Figure Markets provider URLs live in `config/services.php` under `figure_mar
 composer run dev
 ```
 
-Starts the PHP server, queue worker, log tail, Vite dev server and the Reverb WebSocket server together.
+Starts the PHP server, queue worker, log tail, Vite dev server, the Reverb WebSocket server and the market listener (`market:listen`) together. The listener runs `market:sync` at start and on every reconnect, so no manual sync is needed. Log in with the demo user and open the dashboard.
 
 ## Quality checks
 
@@ -69,7 +70,7 @@ composer types:check   # phpstan
 
 ## Continuous integration
 
-GitHub Actions runs `composer setup` and `composer ci:check` (Pint, PHPStan, Pest) on every push to `main` and on every pull request. See `.github/workflows/tests.yml`.
+GitHub Actions runs `composer run setup` and `composer ci:check` (Pint, PHPStan, Pest) on every push to `main` and on every pull request. See `.github/workflows/tests.yml`.
 
 ## Project setup decisions
 

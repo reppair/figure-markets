@@ -4,7 +4,7 @@ What `php artisan market:sync` does to the `markets` table and how it fails, bey
 
 ## When it runs
 
-On demand through `market:sync`, and once at `market:listen` start so the listener has symbols to subscribe to. There is no scheduled re-sync; a market that changes status between runs keeps its stored status until the next sync.
+On demand through `market:sync`, and from `market:listen` at start and after every connection that delivered messages, so the listener has symbols to subscribe to and each routine reconnect refreshes the list. There is no scheduled re-sync; a market that changes status between runs keeps its stored status until the next sync.
 
 ## Flow
 

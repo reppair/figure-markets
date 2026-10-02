@@ -37,7 +37,7 @@ The row is written before the event is dispatched, and the event is dispatched b
 
 ## Broadcast
 
-`MarketUpdated` is `ShouldBroadcastNow` on `PrivateChannel('markets')` as `market.updated`, payload the market's array including `id`. Reverb's client timeouts are 2 seconds (`broadcasting.connections.reverb.client_options`) so a slow Reverb cannot starve the ping timer. Channel authorization is added with the dashboard component.
+`MarketUpdated` is `ShouldBroadcastNow` on `PrivateChannel('markets.{id}')` as `market.updated`, payload the market's array including `id`. One channel per market, keyed by id because symbols may contain dots, lets a browser subscribe to the market it shows and nothing else; `routes/channels.php` admits any logged-in user to every one of them ([market-watch.md](market-watch.md)). Reverb's client timeouts are 2 seconds (`broadcasting.connections.reverb.client_options`) so a slow Reverb cannot starve the ping timer.
 
 ## Keeping the connection alive
 

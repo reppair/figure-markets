@@ -25,9 +25,9 @@ Two feeds, one table, one normalizer per feed. The REST sync fills the market li
 | 6 | Sync trigger | At every listener connect, so at process start and after each reconnect (design decision 19) | The listener needs the symbol list before subscribing. Never on page load. Scheduled re-sync is a later improvement. |
 | 7 | Subscriptions | All open markets at process start | 16 markets today, limit is 50 per connection. Keeps the listener independent of user activity. |
 | 8 | Disappeared markets | A market missing from the REST list is marked `status = closed`, never deleted | Keeps rows and history of what existed; the UI lists open markets only. |
-| 9 | Frontend updates | Livewire component with an Echo listener, re-render per update (filter rule under Frontend below) | No custom JavaScript, testable with Livewire helpers. One roundtrip per update is fine at event-driven rates. |
-| 10 | Access | Behind the existing login, one private `markets` channel, demo user seeded for local use | Matches the auth-gated dashboard. Channel authorization is one callback. `DatabaseSeeder` creates a demo user; README and `.env.example` mark it local-only. |
-| 11 | Channel layout | Single `PrivateChannel('markets')` for all updates | One authorization callback, no symbols with dots in channel names. Every card receives every update and skips the render for other markets. Per-market channels when client count or tick rate grows. |
+| 9 | Frontend updates | Livewire component with an Echo listener, re-render per update, one subscription per market (decision 11) | No custom JavaScript, testable with Livewire helpers. One roundtrip per update is fine at event-driven rates. |
+| 10 | Access | Behind the existing login, private market channels, demo user seeded for local use | Matches the auth-gated dashboard. Channel authorization is one pattern callback. `DatabaseSeeder` creates a demo user; the README marks it local-only. |
+| 11 | Channel layout | One `PrivateChannel('markets.{id}')` per market (design decision 26) | The browser subscribes to the selected market only, so Reverb pushes nothing for the others. One pattern callback authorizes them all; the id avoids the dots some symbols carry. |
 | 12 | Provider environment | UAT by default, production via environment variables | Safe default against rate limits; one config change to switch. |
 | 13 | Broadcast dispatch | `ShouldBroadcastNow` from the listener | No queue worker needed for broadcasting. |
 | 14 | Session cap | Rely on the server closing the connection at 30 minutes, then reconnect with backoff | Proactive reconnect is a later improvement. |
@@ -64,13 +64,13 @@ Listener rules:
 
 ### Broadcasting (R5)
 
-- **`App\Events\MarketUpdated`** implements `ShouldBroadcastNow`. Channel `PrivateChannel('markets')`, broadcast name `market.updated`, payload is the market `id` plus the normalized attributes.
-- **`routes/channels.php`**: `markets` authorizes any authenticated user.
+- **`App\Events\MarketUpdated`** implements `ShouldBroadcastNow`. Channel `PrivateChannel('markets.{id}')`, broadcast name `market.updated`, payload is the market `id` plus the normalized attributes.
+- **`routes/channels.php`**: `markets.{id}` authorizes any authenticated user.
 
 ### Frontend (R3, R8)
 
-- **`App\Livewire\MarketWatch`** on the dashboard. A checkbox group bound to `$symbols` lists the open markets; the first one is checked on mount; no URL state. One `MarketStats` child per checked symbol, keyed by symbol.
-- **`App\Livewire\MarketStats`** takes a symbol, loads the market through a computed property and listens on `echo-private:markets,.market.updated`. When the payload `id` matches its market it re-renders and so re-queries the row; otherwise it skips the render. Shows last price with 24h change, bid, ask, 24h high, low, volume, trade count, and when the price was last updated.
+- **`App\Livewire\MarketWatch`** on the dashboard. A select bound to `$symbol` lists the open markets; `HASH-USDC`, else the first one, is the fallback. The selected market renders as a `MarketStats` child keyed by symbol.
+- **`App\Livewire\MarketStats`** takes a symbol, loads the market through a computed property and subscribes to `echo-private:markets.{id}`. Each `market.updated` event re-renders it and so re-queries the row. Shows last price with 24h change, bid, ask, 24h high, low, volume, trade count, and when the price was last updated.
 
 ### Configuration
 
@@ -96,7 +96,7 @@ In order of importance:
 2. `RestClient` with `Http::fake`: request shape, retry, failure. `SyncMarketsAction` with a mocked client: write, closing absent markets, failure path.
 3. `HandleMarketUpdateAction`: given a decoded update, the row is updated, stale, unknown and malformed updates are skipped, and `MarketUpdated` is dispatched (`Event::fake`). `Backoff` arithmetic. The socket lifecycle itself is not unit-tested (design decision 18).
 4. `MarketUpdated` channel and payload shape.
-5. `MarketWatch`: requires login, lists open markets from factories, checking a market renders its card. `MarketStats`: formatting, null and zero display, an update for its id re-renders, an update for another id skips the render.
+5. `MarketWatch`: requires login, lists open markets from factories, selecting a market renders its card, a closed or unknown symbol falls back. `MarketStats`: formatting, null and zero display, its market's event re-renders it, it subscribes to its own market only.
 6. `market:sync` command smoke test.
 
 ## Running
@@ -106,7 +106,7 @@ In order of importance:
 ## Trade-offs
 
 - Livewire re-render per update (testable, no custom JavaScript) versus Alpine patching the DOM from the payload. Switch when update rate or client count grows.
-- One `markets` channel so every client receives every update and filters by id, versus per-market channels. Switch together with the point above.
+- One channel per market so a browser receives only what it watches, versus one shared channel with client-side filtering. Per-market channels cost one subscription per selection, nothing per tick.
 - Synchronous broadcast from the listener with a 2 second timeout, versus queueing broadcasts through a worker.
 - Database as the single store for list, initial price and factories, versus cache. History would be a separate table.
 - SQLite locally rounds 18-decimal values; PostgreSQL in production does not.

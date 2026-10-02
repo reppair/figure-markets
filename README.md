@@ -28,6 +28,7 @@ Added on top of the starter kit, each tied to a requirement in the [statement of
 
 - **`laravel/reverb`**: the application's own WebSocket server. Browsers receive market updates through it and never connect to the provider (R5, R7). Installed with `php artisan install:broadcasting --reverb`, which also published `config/broadcasting.php`, `config/reverb.php` and `routes/channels.php`.
 - **`laravel-echo`, `pusher-js`** (npm): the browser client for Reverb, configured in `resources/js/echo.js`.
+- **`ratchet/pawl`**: WebSocket client for the backend connection to the provider feed (R2, R7). Laravel ships no WebSocket client; Pawl builds on `react/socket` and `ratchet/rfc6455`, which Reverb already depends on, so it adds no further transitive dependencies.
 - **Guzzle 7**: Reverb 1.x requires `guzzlehttp/psr7` 2.x, so the installer downgraded Guzzle from 8 to 7. Laravel 13 supports both.
 
 The Reverb variables in `.env.example` are local-only defaults so the app runs right after `composer setup`.

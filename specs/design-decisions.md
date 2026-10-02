@@ -10,9 +10,9 @@ Software design decisions made while building, in the order they were taken. The
 
 ## 2. Two separate payload DTOs, no shared base
 
-- **Decision**: `App\Services\FigureMarkets\RestMarketPayload` and `App\Services\FigureMarkets\WebSocketMarketPayload` are independent readonly classes. Each has one named constructor from the provider array and its own `toAttributes()`.
+- **Decision**: `App\Services\FigureMarkets\RestMarketPayload` and `App\Services\FigureMarkets\WebSocketMarketPayload` are independent readonly classes. Each has one named constructor from the provider array and its own `toAttributes()`. The only shared code is the `ReadsProviderValues` trait with the two value-coercion helpers `string()` and `int()`, which carry no field knowledge.
 - **Considered**: one class with fields nullable by source; a static mapper returning arrays; two DTOs extending an abstract base holding the shared fields and mapping.
-- **Why**: readability. Each file shows every field and its provider name in one place, with no parent to read. The cost is about ten properties and their mapping written twice, accepted for two sources that are not expected to grow. The abstract base would be easier to change later but harder to read now. A single class with nullable fields was rejected because the stale guard must never see a REST payload, and only distinct types enforce that.
+- **Why**: readability. Each file shows every field and its provider name in one place, with no parent to read. The cost is about ten properties and their mapping written twice, accepted for two sources that are not expected to grow. The coercion helpers were extracted to a trait after implementation because they are identical and say nothing about fields, so sharing them costs no readability. The abstract base would be easier to change later but harder to read now. A single class with nullable fields was rejected because the stale guard must never see a REST payload, and only distinct types enforce that.
 
 ## 3. Malformed provider payloads throw
 
@@ -52,7 +52,7 @@ Software design decisions made while building, in the order they were taken. The
 
 ## 9. Factory states and test placement for the market model
 
-- **Decision**: `MarketFactory` defaults to an open market with random prices, bid and ask. States: `closed()`, `withoutOrderBook()` (null bid and ask), `untraded()` (zero last price, volume and trade count, as the provider sends it). Payload tests are unit tests fed by the captured fixtures through a `fixture()` helper in `tests/Pest.php`. Model tests are feature tests with the database. Variations the provider has not been observed to send are produced in the test by altering a real fixture record; no fabricated fixture files.
+- **Decision**: `MarketFactory` defaults to an open market with random prices, bid and ask. States: `closed()`, `withoutOrderBook()` (null bid and ask), `untraded()` (zero last price, volume and trade count, as the provider sends it). Payload tests are unit tests fed by the captured fixtures through a `jsonFixture()` helper in `tests/Pest.php` (Pest's own `fixture()` resolves the path). Model tests are feature tests with the database. Variations the provider has not been observed to send are produced in the test by altering a real fixture record; no fabricated fixture files.
 - **Considered**: fabricating fixture files for closed, halted and malformed payloads; skipping those cases.
 - **Why**: fixtures stay a faithful capture of the provider, and the altered-record tests exist only to prove documented decisions (1 and 3). The string `tradeCount24h` case is not tested because the int cast is framework behaviour.
 
@@ -61,3 +61,9 @@ Software design decisions made while building, in the order they were taken. The
 - **Decision**: `WebSocketMarketPayload` carries `symbol`, the live fields and `publishedAt`. Its `toAttributes()` returns the live columns and `price_updated_at`, never an identity column. `status` and `pricePrecision` on a WebSocket message are ignored; `RestMarketPayload` owns every identity column.
 - **Considered**: also writing `status` and `price_precision` from WebSocket messages, with both as required keys that throw when missing.
 - **Why**: clean ownership and no null risk. Decision 3 defaults any non-required key to null, and a null written into a required identity column would fail the upsert. Status changes between syncs are out of scope, since the statement of work excludes scheduled re-sync; a halted market still shows its last price, which is correct. The payload classes and the model are documented together in `docs/data-model.md` at the end of phase 2.
+
+## 11. Market model stores dates with microseconds
+
+- **Decision**: `Market` sets `#[Table(dateFormat: 'Y-m-d H:i:s.u')]` so `price_updated_at` keeps microseconds when written. The same format applies to `created_at` and `updated_at`.
+- **Considered**: leaving Eloquent's default `Y-m-d H:i:s`, which silently truncated the timestamp to whole seconds in the first model test.
+- **Why**: decision 5 requires microsecond precision for the stale guard, and the column is `timestamp(6)`; without the model format the precision existed only in the schema. One attribute on the model is the smallest change that makes writes match the column.

@@ -67,19 +67,19 @@ Rules shared by both payloads, written out in each (decision 2):
 | `tests/Unit/Enums/MarketStatusTest.php` | `fromProvider()` for `OPEN` and a dataset of the other nine provider values |
 | `tests/Feature/Models/MarketTest.php` | factory creates a valid row; `open()` excludes closed markets; decimal casts return strings with 18 decimals; `price_updated_at` round-trips microseconds; `withoutOrderBook()` and `untraded()` states |
 
-`fixture(string $path): array` helper in `tests/Pest.php` reads and decodes `tests/Fixtures/{$path}`.
+`jsonFixture(string $file): array` helper in `tests/Pest.php` decodes a file resolved by Pest's built-in `fixture()`, which returns the path of a file under `tests/Fixtures/`.
 
 ## Steps
 
 | # | Step | Verify | Status |
 |---|------|--------|--------|
-| 1 | `php artisan make:enum MarketStatus` and `make:model Market -mf --pest --no-interaction`; write migration, model, factory, enum | `php artisan migrate:fresh` runs; `Market::factory()->create()` in a test | todo |
-| 2 | `fixture()` helper in `tests/Pest.php` | Used by payload tests | todo |
-| 3 | `MalformedMarketPayload`, `RestMarketPayload`, `WebSocketMarketPayload` | Unit tests above pass | todo |
-| 4 | Model and enum tests | Feature and unit tests above pass | todo |
-| 5 | `laravel-simplifier` pass on implementation, then on tests | No findings left unapplied or logged in the decisions file | todo |
-| 6 | `composer test` | Pint, PHPStan, Pest green | todo |
-| 7 | `update-docs`: add `docs/data-model.md` describing the table, the enum and both payload classes with their field mappings | Doc present, linked from README | todo |
+| 1 | `php artisan make:enum MarketStatus` and `make:model Market -mf --pest --no-interaction`; write migration, model, factory, enum | `php artisan migrate:fresh` runs; `Market::factory()->create()` in a test | done |
+| 2 | `jsonFixture()` helper in `tests/Pest.php` | Used by payload tests | done |
+| 3 | `MalformedMarketPayload`, `RestMarketPayload`, `WebSocketMarketPayload` | Unit tests above pass | done |
+| 4 | Model and enum tests | Feature and unit tests above pass | done |
+| 5 | `laravel-simplifier` pass on implementation, then on tests | No findings left unapplied or logged in the decisions file | done |
+| 6 | `composer test` | Pint, PHPStan, Pest green | done |
+| 7 | `update-docs`: add `docs/data-model.md` describing the table, the enum and both payload classes with their field mappings | Doc present, linked from README | done |
 
 ## Out of scope
 

@@ -8,6 +8,7 @@ Demo application showing real-time cryptocurrency market prices from the public 
 - [Architecture](specs/architecture.md): design decisions, components, failure handling, testing priorities.
 - [Design decisions](specs/design-decisions.md): code-level decisions taken during the build, with alternatives and reasoning.
 - [Figure Markets API](docs/figure-markets-api.md): provider endpoints, verified WebSocket rules, configuration and test fixtures.
+- [Data model](docs/data-model.md): the markets table, model, status enum, payload classes and factory.
 
 ## Stack
 

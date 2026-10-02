@@ -44,7 +44,10 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * @return array<string, mixed>
+ */
+function jsonFixture(string $file): array
 {
-    // ..
+    return json_decode(file_get_contents(fixture($file)), true, 512, JSON_THROW_ON_ERROR);
 }

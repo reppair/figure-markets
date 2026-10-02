@@ -11,15 +11,22 @@ What the application uses from the public Figure Markets API, how it is configur
 
 Defaults point at UAT and live in `config/services.php`, so nothing is needed in `.env` to run locally. Production uses the same paths on `www.figuremarkets.com`. The API is public, unauthenticated and rate-limited.
 
+The provider also documents a public gateway, `https://api.figuremarkets.dev/public` with `/v1/markets` under it, that returns the same data. The application stays on the service path above; see [design decision 7](../specs/design-decisions.md).
+
 ## REST: `GET /markets` (R1)
 
 - Response: `{ "data": Market[], "pagination": { "page", "size", "totalPages", "totalCount" } }`.
-- UAT has 16 markets, all `OPEN`, returned on one page (`size` 16, `totalPages` 1).
+- Query parameters: `page` (from 1), `size` (1 to 50), `location`, `market_type`, `base_asset`, `quote_asset`, `include_hidden`. There is no `status` filter. Hidden markets are left out unless `include_hidden=true`; the application never asks for them.
+- UAT has 16 visible markets, all `OPEN`, on one page. With hidden markets it has 27, some `PREOPEN`. Production has 17, all `OPEN`.
 - `id` equals `symbol`. Symbols may contain dots, for example `figure.forge.plmjuygukj-USD`.
 - Fields the application reads: `symbol`, `displayName`, `denom`, `quoteDenom`, `marketType`, `status`, `pricePrecision`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`.
-- `bestBid` and `bestAsk` exist only for markets with an order book (4 of 16 on UAT). Treat them as nullable.
+- Per the OpenAPI spec, only `bestBid`, `bestAsk` and `percentageChange24h` are optional and nullable. On UAT, bid and ask exist for 4 of 16 markets. Every other field above is required.
+- `status` is one of `UNKNOWN_MARKET_STATUS`, `PENDING`, `OPEN`, `CLOSED`, `PREOPEN`, `SUSPENDED`, `EXPIRED`, `TERMINATED`, `HALTED`, `MATCH_AND_CLOSE`. The application maps `OPEN` to open and everything else to closed; see [design decision 1](../specs/design-decisions.md).
+- `marketType` is one of `UNKNOWN_MARKET_TYPE`, `CRYPTO`, `PERPETUAL`, `FUND`, `ATS`, `VIRTUAL`, `VIRTUAL_YLDS`, `CONNECT`. The default `market_type` filter excludes `PERPETUAL` and `VIRTUAL`. Stored, not used.
+- An untraded market has `lastTradedPrice` `"0"`, `volume24h` `"0"` and `tradeCount24h` `0`, never null (`USDC-USD` on UAT).
 - Records carry no timestamp. REST data never sets `price_updated_at`.
 - Prices and volumes are decimal strings with up to 18 fractional digits.
+- The OpenAPI spec: https://storage.googleapis.com/markets-exchange-docs/combined-public-spec.json. It does not cover the WebSocket.
 
 ## WebSocket (R2)
 
@@ -46,11 +53,11 @@ Rules, each verified against UAT:
 
 Update message:
 
-- Fields the application reads: `channelUuid`, `marketId`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`, `pricePrecision`, `publishTime`.
+- Fields the application reads: `marketId`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`, `publishTime`. `channelUuid` is only used to match a subscription.
 - `marketId` equals the REST `symbol`.
 - `bestBid` and `bestAsk` are absent for markets without an order book.
 - `publishTime` is an RFC 3339 timestamp with nanoseconds, for example `2026-10-02T10:37:54.427234574Z`. It drives the listener's stale-update guard.
-- Also present and ignored: `midMarketPrice`, `indexPrice`, `exchangePrice`, `inRegularTradingHours`, `status`, `channel`.
+- Also present and ignored: `pricePrecision`, `status`, `midMarketPrice`, `indexPrice`, `exchangePrice`, `inRegularTradingHours`, `channel`. Identity columns come from REST only; see [design decision 10](../specs/design-decisions.md).
 
 With `ratchet/pawl`, a ping frame is `$connection->send(new Frame('', true, Frame::OP_PING))` and the pong arrives as a `pong` event.
 
@@ -60,8 +67,8 @@ Captured from UAT into `tests/Fixtures/figure-markets/` with a throwaway Pawl sc
 
 | File | Source | Use |
 |------|--------|-----|
-| `markets.json` | `GET /markets`, full page of 16 markets | `MarketPayload` REST normalization, `SyncMarkets` with `Http::fake`, pagination shape |
-| `market-snapshot.json` | First `MARKET` message for `HASH-USD`, with `bestBid` and `bestAsk` | `MarketPayload` WebSocket normalization, update handling |
+| `markets.json` | `GET /markets`, full page of 16 markets | `RestMarketPayload` normalization, `SyncMarkets` with `Http::fake`, pagination shape |
+| `market-snapshot.json` | First `MARKET` message for `HASH-USD`, with `bestBid` and `bestAsk` | `WebSocketMarketPayload` normalization, update handling |
 | `market-update.json` | Second `MARKET` message for `HASH-USD`, later `publishTime` | Stale guard and broadcast tests, paired with the snapshot |
 | `market-snapshot-no-book.json` | First `MARKET` message for `FIGR_HELOC-USD`, no `bestBid` or `bestAsk` | Nullable bid and ask handling |
 

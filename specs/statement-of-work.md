@@ -42,7 +42,7 @@ Figure Markets WebSocket ──▶ Backend ──▶ Application WebSocket ─�
 
 ## External interface
 
-Public, unauthenticated and rate-limited. Use in line with the provider's terms of service. Details below come from the provider's public API documentation (`https://www.figuremarkets.dev/api-docs/public-api/`). The documentation gives REST paths relative to an unstated base URL; the base URLs listed here were verified by calling them.
+Public, unauthenticated and rate-limited. Use in line with the provider's terms of service. Details below come from the provider's public API documentation (`https://www.figuremarkets.dev/api-docs/public-api/`). The provider documents REST paths under a public gateway base URL; the application uses the service path base URLs below, which serve the same data and were verified by calling them (design decision 7).
 
 ### REST
 
@@ -72,7 +72,7 @@ Unsubscribe:
 { "action": "UNSUBSCRIBE", "channelUuid": "<uuid>" }
 ```
 
-Update message fields: `channelUuid`, `marketId`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`, `pricePrecision`, `publishTime`. `bestBid` and `bestAsk` are absent for markets without an order book. Messages also carry `midMarketPrice`, `indexPrice`, `exchangePrice`, `inRegularTradingHours`, `status` and `channel`, which the application ignores.
+Update message fields: `channelUuid`, `marketId`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`, `pricePrecision`, `publishTime`. `bestBid` and `bestAsk` are absent for markets without an order book. The application reads only `marketId`, `publishTime` and the price and 24h fields; `pricePrecision`, `status` and the extra fields `midMarketPrice`, `indexPrice`, `exchangePrice`, `inRegularTradingHours` and `channel` are ignored.
 
 Verified against UAT (captured fixtures under `tests/Fixtures/figure-markets/`):
 
@@ -107,7 +107,7 @@ Connection rules:
 | R1 | Market list in the UI comes from the application's database, populated by a backend sync from the REST API. Tests fake the HTTP layer. |
 | R2 | A backend process connects to the WebSocket and subscribes to every open market. |
 | R3 | Selected market view shows last traded price, bid, ask, 24h high, low and volume. |
-| R4 | A single normalizer maps provider fields to application attributes; broadcast payloads contain the market id and application attributes only. |
+| R4 | One normalizer per provider source maps provider fields to application attributes; broadcast payloads contain the market id and application attributes only. |
 | R5 | A broadcast event per update reaches the browser over the application's WebSocket server. |
 | R6 | No `wire:poll`, timers or repeated fetches in the frontend. |
 | R7 | No provider WebSocket URL appears in frontend code or configuration exposed to the browser. |

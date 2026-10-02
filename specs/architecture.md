@@ -11,14 +11,14 @@ Figure REST ──(market:sync)──▶ markets table ◀──(upsert tick)─
                            Livewire dashboard ◀── Echo ◀── Reverb ◀────┘
 ```
 
-Two feeds, one table, one normalizer. The REST sync fills the market list and an initial price. The WebSocket listener keeps the live columns current and broadcasts each update. The page reads the table on load and re-renders on broadcast. The browser talks only to the application (R1, R5, R6, R7).
+Two feeds, one table, one normalizer per feed. The REST sync fills the market list and an initial price. The WebSocket listener keeps the live columns current and broadcasts each update. The page reads the table on load and re-renders on broadcast. The browser talks only to the application (R1, R5, R6, R7).
 
 ## Decisions
 
 | # | Topic | Decision | Why |
 |---|-------|----------|-----|
 | 1 | Application WebSocket | Laravel Reverb + Laravel Echo | First-party, installed via `install:broadcasting --reverb`. |
-| 2 | Provider WebSocket client | `ratchet/pawl` | Laravel has no WebSocket client. Pawl wraps `react/socket` and `ratchet/rfc6455`, which Reverb already depends on. Fallback if it does not install cleanly: `amphp/websocket-client`. |
+| 2 | Provider WebSocket client | `ratchet/pawl` | Laravel has no WebSocket client. Pawl wraps `react/socket` and `ratchet/rfc6455`, which Reverb already depends on. |
 | 3 | Listener runtime | `php artisan market:listen`, long-running | One process, one provider connection, independent of web traffic. Started by `artisan dev`. |
 | 4 | Storage | `markets` table, current price and 24h stats on the same row | Simplest thing that gives the UI a list and a current price. History is not required; it would live in a separate table if it were. |
 | 5 | Numeric precision | `decimal(36, 18)` columns with `decimal:18` casts for prices and volumes | The provider sends up to 18 decimals. SQLite stores these as `numeric` and may round locally; PostgreSQL keeps them exact. |
@@ -43,12 +43,12 @@ Two feeds, one table, one normalizer. The REST sync fills the market list and an
 | Identity | `symbol` (unique), `display_name`, `base_asset`, `quote_asset`, `market_type`, `status`, `price_precision` |
 | Live | `last_price`, `best_bid`, `best_ask`, `price_change_24h`, `percentage_change_24h`, `high_24h`, `low_24h`, `volume_24h`, `trade_count_24h`, `price_updated_at` |
 
-Scope `open()`. Factory for tests.
+Identity columns are required. Every live column is nullable and commented as such in the migration: null means the provider sent nothing, while an untraded market is stored with the provider's `0`. `status` is the `MarketStatus` enum (`open`, `closed`). Scope `open()`. Factory for tests. Code-level choices are in [design-decisions.md](design-decisions.md).
 
 ### Provider integration (R1, R2, R4)
 
 - **`App\Services\FigureMarkets\RestClient`**: `Http` facade with timeout and retry. Base URL from `config('services.figure_markets.rest_url')`. `markets()` walks pagination.
-- **`App\Services\FigureMarkets\MarketPayload`**: the single normalizer. Maps a REST market record or a WebSocket update to `Market` attributes. The only class that knows provider field names.
+- **`App\Services\FigureMarkets\RestMarketPayload`** and **`WebSocketMarketPayload`**: the normalizers, one per source, no shared base (design decision 2). Each maps a provider array to `Market` attributes and throws `MalformedMarketPayload` on a missing required key (decision 3). The only classes that know provider field names.
 - **`App\Actions\SyncMarkets`**: REST → normalize → upsert by `symbol`, then mark markets absent from the response as `closed`. Never writes `price_updated_at`. Called by the `market:sync` command and the listener at start.
 - **`App\Console\Commands\ListenToMarkets`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own UUID `channelUuid`, send a WebSocket ping frame every 20 seconds (the provider rejects text pings). On each message: normalize, skip if stale, upsert the row, then dispatch `MarketUpdated`. On close or error: reconnect with backoff and resubscribe. Registered with `DevCommands` so `composer run dev` starts it.
 
@@ -91,7 +91,7 @@ Listener rules:
 
 In order of importance:
 
-1. `MarketPayload`: REST record and WebSocket update to attributes, using fixtures captured from the UAT API under `tests/Fixtures/figure-markets/`.
+1. `RestMarketPayload` and `WebSocketMarketPayload`: REST record and WebSocket update to attributes, using fixtures captured from the UAT API under `tests/Fixtures/figure-markets/`.
 2. `SyncMarkets` with `Http::fake`: pagination, upsert, closing absent markets, failure path.
 3. Update handling extracted from the socket loop: given a decoded update, the row is updated, stale updates are skipped, and `MarketUpdated` is dispatched (`Event::fake`). The socket lifecycle itself is not unit-tested.
 4. `MarketUpdated` channel and payload shape.

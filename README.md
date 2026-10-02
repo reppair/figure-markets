@@ -2,10 +2,11 @@
 
 Demo application showing real-time cryptocurrency market prices from the public Figure Markets API. A signed-in user selects a market and sees its price update live.
 
-## Specifications
+## Specifications and documentation
 
 - [Statement of work](specs/statement-of-work.md): requirements, provider interface, acceptance criteria.
 - [Architecture](specs/architecture.md): design decisions, components, failure handling, testing priorities.
+- [Design decisions](specs/design-decisions.md): code-level decisions taken during the build, with alternatives and reasoning.
 - [Figure Markets API](docs/figure-markets-api.md): provider endpoints, verified WebSocket rules, configuration and test fixtures.
 
 ## Stack

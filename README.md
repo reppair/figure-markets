@@ -11,6 +11,7 @@ Demo application showing real-time cryptocurrency market prices from the public 
 
 - PHP 8.4, Laravel 13
 - Livewire 4 starter kit (Flux UI, Fortify auth, Blaze)
+- Laravel Reverb and Laravel Echo for the application WebSocket
 - Tailwind CSS 4, Vite
 - SQLite (local default)
 - Pest 5, Pint, Larastan
@@ -20,6 +21,16 @@ Demo application showing real-time cryptocurrency market prices from the public 
 - PHP 8.4 with the `sqlite3` extension
 - Composer 2
 - Node 22 and npm
+
+## Dependencies
+
+Added on top of the starter kit, each tied to a requirement in the [statement of work](specs/statement-of-work.md):
+
+- **`laravel/reverb`**: the application's own WebSocket server. Browsers receive market updates through it and never connect to the provider (R5, R7). Installed with `php artisan install:broadcasting --reverb`, which also published `config/broadcasting.php`, `config/reverb.php` and `routes/channels.php`.
+- **`laravel-echo`, `pusher-js`** (npm): the browser client for Reverb, configured in `resources/js/echo.js`.
+- **Guzzle 7**: Reverb 1.x requires `guzzlehttp/psr7` 2.x, so the installer downgraded Guzzle from 8 to 7. Laravel 13 supports both.
+
+The Reverb variables in `.env.example` are local-only defaults so the app runs right after `composer setup`.
 
 ## Setup
 

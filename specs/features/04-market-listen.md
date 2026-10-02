@@ -14,16 +14,16 @@ The `market:listen` command, the `HandleMarketUpdateAction` it hands each messag
 handle()
   trap SIGTERM, SIGINT → stop
   loop until stopped
-    SyncMarketsAction            failure → log, continue
+    market:sync                  only at start and after a connection that delivered messages; failure → log, continue
     symbols = open markets       none → log, Sleep backoff, continue
     connect (Pawl)               failure → log, Sleep backoff, continue
       subscribe each symbol with its own UUID
       ping frame every 20s
-      message → json_decode → HandleMarketUpdateAction::handle()
+      message → json_decode (not an object → print skipped, log) → backoff reset → HandleMarketUpdateAction::handle()
                  Market → print "HASH-USD 0.020000000000000000 at 10:37:55.734"
                  null   → print "Skipped a message, see the log for details."
       close → print and log code and reason, run loop ends
-    backoff reset after a connection that was established
+    stop signal while connecting → close as soon as the connection resolves
     Sleep backoff
 ```
 
@@ -41,8 +41,8 @@ HandleMarketUpdateAction::handle(array $message): ?Market
 
 | Class | Responsibility |
 |-------|----------------|
-| `App\Console\Commands\ListenToMarketsCommand` | Signature `market:listen`. Constructor-free; `handle(SyncMarketsAction, HandleMarketUpdateAction, Backoff)`. Owns the loop above with `ratchet/pawl` and the ReactPHP loop. Prints to the console and logs: sync result, connect with symbol count, one line per written update, `Skipped a message, see the log for details.`, disconnect with code and reason, the reconnect delay, each error. Registered with `DevCommands::artisan('market:listen')` in `AppServiceProvider` (decision 18, 19). |
-| `App\Actions\HandleMarketUpdateAction` | `handle(array $message): ?Market` as above. Catches only `MalformedMarketPayload`. Writes through `$market->update()`, then dispatches, then returns the market; null on every skip (decision 17). |
+| `App\Console\Commands\ListenToMarketsCommand` | Signature `market:listen`. `handle(HandleMarketUpdateAction, Backoff)`; the sync runs through `$this->call('market:sync')` so its output and error handling are shared with the command. Owns the loop above with `ratchet/pawl` and the ReactPHP loop. Prints to the console and logs: sync result, connect with symbol count, one line per written update, `Skipped a message, see the log for details.`, disconnect with code and reason, the reconnect delay, each error. Registered with `DevCommands::artisan('market:listen')` in `AppServiceProvider` (decision 18, 19). |
+| `App\Actions\HandleMarketUpdateAction` | `handle(array $message): ?Market` as above. Catches `MalformedMarketPayload` around normalization and `Throwable` around the dispatch, so a failed broadcast is reported and the market still returned. Writes through `$market->update()`, then dispatches, then returns the market; null on every skip (decision 17). |
 | `App\Services\FigureMarkets\Backoff` | `next(): float` returns the delay in seconds: 1, 2, 4 ... capped at 30, each with ±20% jitter. `reset()` returns to 1. Constants on the class. |
 | `App\Events\MarketUpdated` | `ShouldBroadcastNow`. `__construct(public Market $market)`. `broadcastOn()` `PrivateChannel('markets')`, `broadcastAs()` `market.updated`, `broadcastWith()` `$market->toArray()` (decision 20). |
 
@@ -52,7 +52,7 @@ Configuration: `config/broadcasting.php` `reverb.client_options` gets `connect_t
 
 | File | Covers |
 |------|--------|
-| `tests/Feature/Actions/HandleMarketUpdateActionTest.php` | `market-snapshot.json` on a factory `HASH-USD` row writes every live column and `price_updated_at` with microseconds, dispatches `MarketUpdated` carrying the already-updated market (`Event::fake`, assertion inside the dispatch callback reads the new price) and returns the market; `market-update.json` after the snapshot is accepted; the snapshot after the update returns null, no write, no event; a snapshot with the same `publishTime` as the row is skipped; a row without `price_updated_at` accepts any message; a message for an unknown symbol is skipped and logged; a message without `marketId` is skipped and logged |
+| `tests/Feature/Actions/HandleMarketUpdateActionTest.php` | `market-snapshot.json` on a factory `HASH-USD` row writes every live column and `price_updated_at` with microseconds, dispatches `MarketUpdated` carrying the already-updated market (`Event::fake`, assertion inside the dispatch callback reads the new price) and returns the market; `market-update.json` after the snapshot is accepted; the snapshot after the update returns null, no write, no event; a snapshot with the same `publishTime` as the row is skipped; a row without `price_updated_at` accepts any message; a message for an unknown symbol is skipped and logged; a message without `marketId` is skipped and logged; a throwing event listener is reported and the written market still returned |
 | `tests/Unit/Services/FigureMarkets/BackoffTest.php` | ten calls to `next()` stay within ±20% of 1, 2, 4, 8, 16, 30, 30 ...; `reset()` returns to the 1s band |
 | `tests/Unit/Events/MarketUpdatedTest.php` | channel is `private-markets`, name is `market.updated`, payload equals the market's array and contains `id` |
 
@@ -62,14 +62,14 @@ The command has no automated test (decision 18). Verification is the smoke run i
 
 | # | Step | Verify | Status |
 |---|------|--------|--------|
-| 1 | `php artisan make:class Services/FigureMarkets/Backoff`; write it | `BackoffTest` passes | todo |
-| 2 | `php artisan make:event MarketUpdated`; write it; set `reverb.client_options` | `MarketUpdatedTest` passes | todo |
-| 3 | `php artisan make:class Actions/HandleMarketUpdateAction`; write it | `HandleMarketUpdateActionTest` passes | todo |
-| 4 | `php artisan make:command ListenToMarketsCommand`; write it; register with `DevCommands` | `php artisan dev --help` lists no error; `composer run dev` shows the listener tab | todo |
-| 5 | `laravel-simplifier` pass on implementation, then on tests | No findings left unapplied or logged in the decisions file | todo |
-| 6 | `composer test` | Pint, PHPStan, Pest green | todo |
-| 7 | Smoke: `composer run dev`, watch the listener log connect and 16 subscriptions, Reverb log `market.updated` events for `HASH-USD`, `markets` rows gain `price_updated_at`; `Ctrl+C` exits cleanly | Observed | todo |
-| 8 | `update-docs`: add `docs/market-listen.md` with a Mermaid version of the loop, stale guard semantics, failure table, the hand-verified lifecycle and the `MarketFeed` improvement; link from README | Doc present, linked | todo |
+| 1 | `php artisan make:class Services/FigureMarkets/Backoff`; write it | `BackoffTest` passes | done |
+| 2 | `php artisan make:event MarketUpdated`; write it; set `reverb.client_options` | `MarketUpdatedTest` passes | done |
+| 3 | `php artisan make:class Actions/HandleMarketUpdateAction`; write it | `HandleMarketUpdateActionTest` passes | done |
+| 4 | `php artisan make:command ListenToMarketsCommand`; write it; register with `DevCommands` | `php artisan dev --help` lists no error; `composer run dev` shows the listener tab | done |
+| 5 | `laravel-simplifier` pass on implementation, then on tests | No findings left unapplied or logged in the decisions file | done |
+| 6 | `composer test` | Pint, PHPStan, Pest green | done |
+| 7 | Smoke: `composer run dev`, watch the listener log connect and 16 subscriptions, Reverb log `market.updated` events for `HASH-USD`, `markets` rows gain `price_updated_at`; `Ctrl+C` exits cleanly | Observed: 50s run against UAT with Reverb, 267 updates, microsecond timestamps stored, SIGTERM exit clean | done |
+| 8 | `update-docs`: add `docs/market-listen.md` with a Mermaid version of the loop, stale guard semantics, failure table, the hand-verified lifecycle and the `MarketFeed` improvement; link from README | Doc present, linked | done |
 
 ## Out of scope
 

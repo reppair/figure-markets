@@ -1,0 +1,52 @@
+# Laravel
+/.phpunit.cache
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+/auth.json
+
+# Environment
+.env
+.env.backup
+.env.production
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs / editors
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+.phpactor.json
+
+# AI assistant config (generated locally by `php artisan boost:install`, not committed)
+/.agents
+/.amp
+/.claude
+/.cursor
+/.factory
+/.grok
+/.junie
+/.kiro
+/.pi
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/boost.json
+/opencode.json
+/opencode.jsonc

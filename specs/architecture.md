@@ -22,7 +22,7 @@ Two feeds, one table, one normalizer per feed. The REST sync fills the market li
 | 3 | Listener runtime | `php artisan market:listen`, long-running | One process, one provider connection, independent of web traffic. Started by `artisan dev`. |
 | 4 | Storage | `markets` table, current price and 24h stats on the same row | Simplest thing that gives the UI a list and a current price. History is not required; it would live in a separate table if it were. |
 | 5 | Numeric precision | `decimal(36, 18)` columns with `decimal:18` casts for prices and volumes | The provider sends up to 18 decimals. SQLite stores these as `numeric` and may round locally; PostgreSQL keeps them exact. |
-| 6 | Sync trigger | Once, at listener process start | The listener needs the symbol list before subscribing. Never on page load. Scheduled re-sync is a later improvement. |
+| 6 | Sync trigger | At every listener connect, so at process start and after each reconnect (design decision 19) | The listener needs the symbol list before subscribing. Never on page load. Scheduled re-sync is a later improvement. |
 | 7 | Subscriptions | All open markets at process start | 16 markets today, limit is 50 per connection. Keeps the listener independent of user activity. |
 | 8 | Disappeared markets | A market missing from the REST list is marked `status = closed`, never deleted | Keeps rows and history of what existed; the UI lists open markets only. |
 | 9 | Frontend updates | Livewire component with an Echo listener, re-render per update (filter rule under Frontend below) | No custom JavaScript, testable with Livewire helpers. One roundtrip per update is fine at event-driven rates. |
@@ -50,7 +50,7 @@ Identity columns are required. Every live column is nullable and commented as su
 - **`App\Services\FigureMarkets\RestClient`**: `Http` facade with timeout and retry. Base URL from `config('services.figure_markets.rest_url')`. `markets()` makes one `GET /markets?size=50` request and returns the raw records; page walking is a later improvement (design decision 12).
 - **`App\Services\FigureMarkets\RestMarketPayload`** and **`WebSocketMarketPayload`**: the normalizers, one per source, no shared base (design decision 2). Each maps a provider array to `Market` attributes and throws `MalformedMarketPayload` on a missing required key (decision 3). The only classes that know provider field names.
 - **`App\Actions\SyncMarketsAction`**: REST → normalize all records → `updateOrCreate` by `symbol`, then mark markets absent from the response as `closed`. Never writes `price_updated_at`. Called by the `market:sync` command and the listener at start.
-- **`App\Console\Commands\ListenToMarketsCommand`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own UUID `channelUuid`, send a WebSocket ping frame every 20 seconds (the provider rejects text pings). On each message: normalize, skip if stale, upsert the row, then dispatch `MarketUpdated`. On close or error: reconnect with backoff and resubscribe. Registered with `DevCommands` so `composer run dev` starts it.
+- **`App\Console\Commands\ListenToMarketsCommand`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own UUID `channelUuid`, send a WebSocket ping frame every 20 seconds (the provider rejects text pings). On each message: hand the decoded array to `HandleMarketUpdateAction`, which normalizes, skips if stale, updates the row, then dispatches `MarketUpdated`. On close or error: re-sync, reconnect with backoff and resubscribe (design decisions 17 to 19). Registered with `DevCommands` so `composer run dev` starts it.
 
 Listener rules:
 
@@ -93,7 +93,7 @@ In order of importance:
 
 1. `RestMarketPayload` and `WebSocketMarketPayload`: REST record and WebSocket update to attributes, using fixtures captured from the UAT API under `tests/Fixtures/figure-markets/`.
 2. `RestClient` with `Http::fake`: request shape, retry, failure. `SyncMarketsAction` with a mocked client: write, closing absent markets, failure path.
-3. Update handling extracted from the socket loop: given a decoded update, the row is updated, stale updates are skipped, and `MarketUpdated` is dispatched (`Event::fake`). The socket lifecycle itself is not unit-tested.
+3. `HandleMarketUpdateAction`: given a decoded update, the row is updated, stale, unknown and malformed updates are skipped, and `MarketUpdated` is dispatched (`Event::fake`). `Backoff` arithmetic. The socket lifecycle itself is not unit-tested (design decision 18).
 4. `MarketUpdated` channel and payload shape.
 5. `MarketWatch`: requires login, lists open markets from factories, selecting a market shows it, an update for the selected id refreshes it, an update for another id does not.
 6. `market:sync` command smoke test.
@@ -117,4 +117,5 @@ In order of importance:
 - Hourly scheduled `market:sync`.
 - REST pagination walking and `Retry-After` handling on 429.
 - Proactive reconnect before the session cap.
+- A `MarketFeed` interface in front of Pawl so the listener's reconnect, resubscribe, backoff and shutdown can be tested against a mock (design decision 18).
 - Snapshot history table, per-user on-demand subscriptions, metrics.

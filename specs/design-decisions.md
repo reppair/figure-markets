@@ -91,3 +91,33 @@ Software design decisions made while building, in the order they were taken. The
 - **Decision**: the command calls the action, prints `Synced N markets.` and returns success. On any `Throwable` it calls `report()`, prints one error line and returns failure.
 - **Considered**: letting the exception propagate to Laravel's handler, which also logs and exits 1.
 - **Why**: decision 3 puts the failure decision with the caller. Catching in the command mirrors what the listener does in phase 4 (catch, log, back off), and gives a one-line message instead of a stack trace.
+
+## 16. Every accepted WebSocket update writes the row and broadcasts
+
+- **Decision**: the listener writes and dispatches `MarketUpdated` for every message that passes the stale guard, with no comparison of the live columns against the stored row. Each message carries a new `publishTime`, so `price_updated_at` always changes and the row is always dirty.
+- **Considered**: skipping the write and the broadcast when only the timestamp changed.
+- **Why**: the provider sends a message only when market state changes, so duplicates are rare, and the timestamp is itself the "last updated" value the UI shows. A change detector would save one re-render at the cost of a column-by-column comparison.
+
+## 17. Message handling is an action, not an observer
+
+- **Decision**: `App\Actions\HandleMarketUpdateAction::handle(array $message): ?Market` normalizes the message with `WebSocketMarketPayload`, loads the row by symbol, applies the stale guard, calls `$market->update()`, then dispatches `MarketUpdated` and returns the market. It catches `MalformedMarketPayload`, logs a warning with the raw message and returns null; a stale message or a symbol not in the table is logged and returns null the same way. The command prints one line per written update and `Skipped a message, see the log for details.` for null, so the `artisan dev` listener tab shows the live feed while the reason for a skip stays in the log. Provider rejections (`{"message": "Invalid request", "code": 1}`) and any other unexpected shape take this path, since they lack `marketId`.
+- **Considered**: dispatching from a model `updated` observer; a dedicated branch in the command for the provider's rejection shape.
+- **Why**: the REST sync also updates rows and must never broadcast, and the architecture requires the row to be written before the event is dispatched. One action is the unit the socket loop hands each message to and the unit the tests drive with `Event::fake`. A rejection branch would guard against a message our own subscribe format never triggers; the malformed path already logs the provider's text.
+
+## 18. Pawl stays inline in the command, the lifecycle is verified by hand
+
+- **Decision**: `ListenToMarketsCommand` holds the connect, subscribe, ping timer, close and error handling directly against `ratchet/pawl`. The reconnect delay is a blocking `Sleep::for()` between iterations, since the connection is closed at that point. The backoff arithmetic lives in `App\Services\FigureMarkets\Backoff` (`next()`, `reset()`), the only part of the lifecycle with a unit test. The socket lifecycle itself has no automated test; `composer run dev` is the check.
+- **Considered**: a `MarketFeed` interface (`listen(symbols, onMessage)`, `stop()`) with a Pawl implementation, so the command's reconnect, resubscribe, backoff and SIGTERM handling could be tested against a mock.
+- **Why**: simplicity. The interface would add two files and a container binding to test the loop, while the risky part, the Pawl calls, stays untested either way. The command is shaped so the extraction is one method later. The interface is the named improvement in the architecture and the README.
+
+## 19. The listener syncs on every connect
+
+- **Decision**: each iteration of the listener loop runs `SyncMarketsAction` first, logs and continues on failure, then loads open markets. With no open markets it logs, sleeps the backoff and loops. Otherwise it connects and subscribes. After a server close the next iteration re-syncs before reconnecting.
+- **Considered**: syncing once at process start only.
+- **Why**: one loop body with no first-run branch, and the 30-minute reconnect refreshes identity data for free. One REST call per half hour is well within the provider's limits.
+
+## 20. `MarketUpdated` is built in phase 4 with its broadcast shape
+
+- **Decision**: `App\Events\MarketUpdated` is created with the listener: `ShouldBroadcastNow`, `PrivateChannel('markets')`, `broadcastAs()` `market.updated`, `broadcastWith()` is `$market->toArray()`, which includes `id`. `broadcasting.connections.reverb.client_options` gets the 2-second `connect_timeout` and `timeout`. Phase 5 adds channel authorization, the component and the demo user.
+- **Considered**: a plain event in phase 4, broadcasting added in phase 5.
+- **Why**: the listener dispatches the event and its tests assert the dispatch, so the class belongs to this phase. Completing it here lets the listener be smoke-tested end to end against Reverb at the end of phase 4 instead of a phase later.

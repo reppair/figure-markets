@@ -9,6 +9,7 @@ Demo application showing real-time cryptocurrency market prices from the public 
 - [Design decisions](specs/design-decisions.md): code-level decisions taken during the build, with alternatives and reasoning.
 - [Figure Markets API](docs/figure-markets-api.md): provider endpoints, verified WebSocket rules, configuration and test fixtures.
 - [Data model](docs/data-model.md): the markets table, model, status enum, payload classes and factory.
+- [Market sync](docs/market-sync.md): what `market:sync` writes, how it fails, and the pagination and rate-limit gaps.
 
 ## Stack
 

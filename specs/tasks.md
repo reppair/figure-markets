@@ -6,7 +6,7 @@ Build order for the design in [architecture.md](architecture.md). One feature sp
 |---|-------|------|--------|
 | 1 | Preparation: broadcasting, provider client, config, fixtures | [features/01-preparation.md](features/01-preparation.md) | done |
 | 2 | Market model, table, factory, REST and WebSocket payloads | [features/02-market-model.md](features/02-market-model.md) | done |
-| 3 | `RestClient`, `SyncMarketsAction`, `market:sync` | [features/03-market-sync.md](features/03-market-sync.md) | in progress |
+| 3 | `RestClient`, `SyncMarketsAction`, `market:sync` | [features/03-market-sync.md](features/03-market-sync.md) | done |
 | 4 | `market:listen` provider WebSocket listener | features/04-market-listen.md | todo |
 | 5 | `MarketUpdated` event, channel auth, `MarketWatch` component, demo user | features/05-market-watch.md | todo |
 | 6 | README: run, assumptions, gaps, improvements | features/06-readme.md | todo |

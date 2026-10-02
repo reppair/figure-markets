@@ -1,6 +1,6 @@
 # Tasks
 
-Build order for the design in [architecture.md](architecture.md). One feature spec per phase under `specs/features/`, written just before the phase starts. Status: `todo`, `in progress`, `done`. Phases 2 to 5 each end with a document under `docs/`; phase 6 is the README itself.
+Build order for the design in [architecture.md](architecture.md). One feature spec per phase under `specs/features/`, written just before the phase starts. Status: `todo`, `in progress`, `done`. Phases 2 to 5 each end with a document under `docs/`.
 
 | # | Phase | Spec | Status |
 |---|-------|------|--------|
@@ -9,4 +9,3 @@ Build order for the design in [architecture.md](architecture.md). One feature sp
 | 3 | `RestClient`, `SyncMarketsAction`, `market:sync` | [features/03-market-sync.md](features/03-market-sync.md) | done |
 | 4 | `market:listen` provider WebSocket listener, `MarketUpdated` event | [features/04-market-listen.md](features/04-market-listen.md) | done |
 | 5 | Channel auth, `MarketWatch` and `MarketStats` components, demo user | [features/05-market-watch.md](features/05-market-watch.md) | done |
-| 6 | README: run, assumptions, gaps, improvements | features/06-readme.md | todo |

@@ -73,4 +73,4 @@ Component tests use the factory states from decision 9 and need no login, the da
 
 - Watching several markets at once, the selection in the URL, Alpine patching the DOM from the payload (decisions 21 to 23, 26).
 - A market changing status while the page is open; the next page load reflects it.
-- README run instructions, assumptions, gaps and improvements (phase 6).
+- README run instructions, assumptions, gaps and improvements.

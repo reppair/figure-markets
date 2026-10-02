@@ -4,7 +4,7 @@ Build order for the design in [architecture.md](architecture.md). One feature sp
 
 | # | Phase | Spec | Status |
 |---|-------|------|--------|
-| 1 | Preparation: broadcasting, provider client, config, fixtures | [features/01-preparation.md](features/01-preparation.md) | in progress |
+| 1 | Preparation: broadcasting, provider client, config, fixtures | [features/01-preparation.md](features/01-preparation.md) | done |
 | 2 | Market model, table, factory, `MarketPayload` normalizer | features/02-market-model.md | todo |
 | 3 | `RestClient`, `SyncMarkets`, `market:sync` | features/03-market-sync.md | todo |
 | 4 | `market:listen` provider WebSocket listener | features/04-market-listen.md | todo |

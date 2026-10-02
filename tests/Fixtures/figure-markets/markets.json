@@ -1,0 +1,1063 @@
+{
+    "data": [
+        {
+            "id": "FIGR_HELOC-USD",
+            "symbol": "FIGR_HELOC-USD",
+            "displayName": "FIGR_HELOC-USD",
+            "denom": "FIGR_HELOC",
+            "quoteDenom": "USD",
+            "midMarketPrice": "1.0599000",
+            "priceChange24h": "0.000000000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "1.059900000100000000",
+            "volume24h": "242099.369104841718000000",
+            "high24h": "1.0599000",
+            "low24h": "1.0599000",
+            "indexPrice": "1.0599000",
+            "tradeCount24h": 1,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "FIGR_HELOC-USD",
+            "exchangePrice": "1.059900000100000000",
+            "proTradeAvailable": false,
+            "baseVolume24h": "228417.180000000000000000",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "HASH-USD",
+            "symbol": "HASH-USD",
+            "displayName": "HASH-USD",
+            "denom": "HASH",
+            "quoteDenom": "USD",
+            "bestBid": "0.019",
+            "bestAsk": "0.020",
+            "midMarketPrice": "0.0195",
+            "priceChange24h": "-0.001000000000000000",
+            "percentageChange24h": -0.050000,
+            "lastTradedPrice": "0.019000000000000000",
+            "volume24h": "1447.527114000000000000",
+            "high24h": "0.025",
+            "low24h": "0.017",
+            "indexPrice": "0.019",
+            "tradeCount24h": 14027,
+            "denomExponent": 3,
+            "quoteExponent": 3,
+            "pricePrecision": 3,
+            "quantityPrecision": 3,
+            "sizeIncrement": "0.001",
+            "priceIncrement": "0.001",
+            "minTradeQuantity": "0.001",
+            "askFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "bidFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "makerFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "takerFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CRYPTO",
+            "ep3InstrumentId": "HASH-USD",
+            "exchangePrice": "0.020",
+            "proTradeAvailable": true,
+            "baseVolume24h": "68815.251000000000000000",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/nhash"
+            ],
+            "contractAddress": [
+                "nhash",
+                "ibc/CE5BFF1D9BADA03BB5CCA5F56939392A761B53A10FBD03B37506669C3218D3B2"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figuremarkets.fiat.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 1100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 1100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "USDC-USD",
+            "symbol": "USDC-USD",
+            "displayName": "USDC-USD",
+            "denom": "USDC",
+            "quoteDenom": "USD",
+            "bestBid": "1.0098",
+            "priceChange24h": "-0.000007720",
+            "percentageChange24h": -0.000008,
+            "lastTradedPrice": "0",
+            "volume24h": "0",
+            "high24h": "1.0000",
+            "low24h": "0.9999",
+            "indexPrice": "0.9999",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 4,
+            "pricePrecision": 4,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0001",
+            "minTradeQuantity": "0.01",
+            "askFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "bidFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "makerFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "takerFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CRYPTO",
+            "ep3InstrumentId": "USDC-USD",
+            "exchangePrice": "0.9999",
+            "proTradeAvailable": true,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/uusdc.figure.se"
+            ],
+            "contractAddress": [
+                "uusdc.figure.se"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb",
+                "figuremarkets.fiat.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "USDT-USD",
+            "symbol": "USDT-USD",
+            "displayName": "USDT-USD",
+            "denom": "USDT",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.000247550",
+            "percentageChange24h": 0.000248,
+            "lastTradedPrice": "0",
+            "volume24h": "0",
+            "high24h": "1.00",
+            "low24h": "1.00",
+            "indexPrice": "1.00",
+            "tradeCount24h": 0,
+            "denomExponent": 4,
+            "quoteExponent": 2,
+            "pricePrecision": 2,
+            "quantityPrecision": 4,
+            "sizeIncrement": "0.0001",
+            "priceIncrement": "0.01",
+            "minTradeQuantity": "0.0001",
+            "askFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "bidFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "makerFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "takerFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CRYPTO",
+            "ep3InstrumentId": "USDT-USD",
+            "exchangePrice": "1.00",
+            "proTradeAvailable": true,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/uusdt.figure.se"
+            ],
+            "contractAddress": [
+                "uusdt.figure.se"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb",
+                "figuremarkets.fiat.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "YLDS-USD-2F",
+            "symbol": "YLDS-USD-2F",
+            "displayName": "YLDS-USD",
+            "denom": "YLDS",
+            "quoteDenom": "USD",
+            "midMarketPrice": "1",
+            "priceChange24h": "0.000000000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "1.000000000000000000",
+            "volume24h": "450.000000000000000000",
+            "high24h": "1.00",
+            "low24h": "1.00",
+            "indexPrice": "1.00",
+            "tradeCount24h": 7,
+            "denomExponent": 4,
+            "quoteExponent": 2,
+            "pricePrecision": 2,
+            "quantityPrecision": 4,
+            "sizeIncrement": "0.0001",
+            "priceIncrement": "0.01",
+            "minTradeQuantity": "0.0001",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "FUND",
+            "ep3InstrumentId": "YLDS-USD-2F",
+            "exchangePrice": "1",
+            "proTradeAvailable": false,
+            "baseVolume24h": "450.000000000000000000",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/uylds.fcc"
+            ],
+            "contractAddress": [
+                "uylds.fcc"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb",
+                "approved.ylds.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "auto.forge-USD",
+            "symbol": "auto.forge-USD",
+            "displayName": "auto.forge-USD",
+            "denom": "auto.forge",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "0.007796",
+            "volume24h": "0",
+            "high24h": "0.0077960",
+            "low24h": "0.0077960",
+            "indexPrice": "0.0077960",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "auto.forge-USD",
+            "exchangePrice": "0.007796",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "figure.forge.plmjuygukj-USD",
+            "symbol": "figure.forge.plmjuygukj-USD",
+            "displayName": "figure.forge.plmjuygukj-USD",
+            "denom": "figure.forge.plmjuygukj",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "0.008440308883",
+            "volume24h": "0",
+            "high24h": "0.0084403",
+            "low24h": "0.0084403",
+            "indexPrice": "0.0084403",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "figure.forge.plmjuygukj-USD",
+            "exchangePrice": "0.008440308883",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "figure.forge.sdjhgtyuim-USD",
+            "symbol": "figure.forge.sdjhgtyuim-USD",
+            "displayName": "figure.forge.sdjhgtyuim-USD",
+            "denom": "figure.forge.sdjhgtyuim",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "0.009769635382",
+            "volume24h": "0",
+            "high24h": "0.0097696",
+            "low24h": "0.0097696",
+            "indexPrice": "0.0097696",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "figure.forge.sdjhgtyuim-USD",
+            "exchangePrice": "0.009769635382",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "figure.forge.yuhgaqcxnv-USD",
+            "symbol": "figure.forge.yuhgaqcxnv-USD",
+            "displayName": "figure.forge.yuhgaqcxnv-USD",
+            "denom": "figure.forge.yuhgaqcxnv",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.00",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "1.00",
+            "volume24h": "0",
+            "high24h": "1.0000000",
+            "low24h": "1.0000000",
+            "indexPrice": "1.0000000",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "figure.forge.yuhgaqcxnv-USD",
+            "exchangePrice": "1.00",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "loan.dicer.token.aigobieesh-USD",
+            "symbol": "loan.dicer.token.aigobieesh-USD",
+            "displayName": "loan.dicer.token.aigobieesh-USD",
+            "denom": "loan.dicer.token.aigobieesh",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "0.010000000000",
+            "volume24h": "0",
+            "high24h": "0.0100000",
+            "low24h": "0.0100000",
+            "indexPrice": "0.0100000",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "loan.dicer.token.aigobieesh-USD",
+            "exchangePrice": "0.010000000000",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "smb.forge-USD",
+            "symbol": "smb.forge-USD",
+            "displayName": "smb.forge-USD",
+            "denom": "smb.forge",
+            "quoteDenom": "USD",
+            "priceChange24h": "0.000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "0.009986364822",
+            "volume24h": "0",
+            "high24h": "0.0099864",
+            "low24h": "0.0099864",
+            "indexPrice": "0.0099864",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 7,
+            "pricePrecision": 7,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0000001",
+            "minTradeQuantity": "0.01",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CONNECT",
+            "ep3InstrumentId": "smb.forge-USD",
+            "exchangePrice": "0.009986364822",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [],
+            "contractAddress": [],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "HASH-USDC",
+            "symbol": "HASH-USDC",
+            "displayName": "HASH-USDC",
+            "denom": "HASH",
+            "quoteDenom": "USDC",
+            "bestBid": "0.019",
+            "bestAsk": "0.021",
+            "midMarketPrice": "0.020",
+            "priceChange24h": "0.002000000000000000",
+            "percentageChange24h": 0.111111,
+            "lastTradedPrice": "0.020000000000000000",
+            "volume24h": "280.795400000000000000",
+            "high24h": "0.025",
+            "low24h": "0.017",
+            "indexPrice": "0.020",
+            "tradeCount24h": 4149,
+            "denomExponent": 3,
+            "quoteExponent": 3,
+            "pricePrecision": 3,
+            "quantityPrecision": 3,
+            "sizeIncrement": "0.001",
+            "priceIncrement": "0.001",
+            "minTradeQuantity": "0.001",
+            "askFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "bidFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "makerFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "takerFee": {
+                "rate": 0.001000000,
+                "minBasisPoints": 10.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.001000000,
+                "maxBasisPoints": 10.000000000
+            },
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CRYPTO",
+            "ep3InstrumentId": "HASH-USDC",
+            "exchangePrice": "0.020",
+            "proTradeAvailable": true,
+            "baseVolume24h": "14002.700000000000000000",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/nhash"
+            ],
+            "contractAddress": [
+                "nhash",
+                "ibc/CE5BFF1D9BADA03BB5CCA5F56939392A761B53A10FBD03B37506669C3218D3B2"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 1100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 1100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "YLDS-USDC-2F",
+            "symbol": "YLDS-USDC-2F",
+            "displayName": "YLDS-USDC",
+            "denom": "YLDS",
+            "quoteDenom": "USDC",
+            "midMarketPrice": "1",
+            "priceChange24h": "0.000000000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "1.000000000000000000",
+            "volume24h": "0",
+            "high24h": "1.00",
+            "low24h": "1.00",
+            "indexPrice": "1.00",
+            "tradeCount24h": 0,
+            "denomExponent": 4,
+            "quoteExponent": 2,
+            "pricePrecision": 2,
+            "quantityPrecision": 4,
+            "sizeIncrement": "0.0001",
+            "priceIncrement": "0.01",
+            "minTradeQuantity": "0.0001",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "FUND",
+            "ep3InstrumentId": "YLDS-USDC-2F",
+            "exchangePrice": "1",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/uylds.fcc"
+            ],
+            "contractAddress": [
+                "uylds.fcc"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb",
+                "approved.ylds.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "USDC-USDT",
+            "symbol": "USDC-USDT",
+            "displayName": "USDC-USDT",
+            "denom": "USDC",
+            "quoteDenom": "USDT",
+            "priceChange24h": "-0.000007720",
+            "percentageChange24h": -0.000008,
+            "lastTradedPrice": "0",
+            "volume24h": "0",
+            "high24h": "1.0000",
+            "low24h": "0.9999",
+            "indexPrice": "0.9999",
+            "tradeCount24h": 0,
+            "denomExponent": 2,
+            "quoteExponent": 4,
+            "pricePrecision": 4,
+            "quantityPrecision": 2,
+            "sizeIncrement": "0.01",
+            "priceIncrement": "0.0001",
+            "minTradeQuantity": "0.01",
+            "askFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "bidFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "makerFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "takerFee": {
+                "rate": 0.000000000,
+                "minBasisPoints": 0.000000000,
+                "minimumNotional": 0,
+                "maximumRate": 0.000000000,
+                "maxBasisPoints": 0.000000000
+            },
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "CRYPTO",
+            "ep3InstrumentId": "USDC-USDT",
+            "exchangePrice": "0.9999",
+            "proTradeAvailable": true,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/uusdc.figure.se"
+            ],
+            "contractAddress": [
+                "uusdc.figure.se"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "YLDS-USDT-2F",
+            "symbol": "YLDS-USDT-2F",
+            "displayName": "YLDS-USDT",
+            "denom": "YLDS",
+            "quoteDenom": "USDT",
+            "midMarketPrice": "1",
+            "priceChange24h": "0.000000000000000000",
+            "percentageChange24h": 0.000000,
+            "lastTradedPrice": "1.000000000000000000",
+            "volume24h": "0",
+            "high24h": "1.00",
+            "low24h": "1.00",
+            "indexPrice": "1.00",
+            "tradeCount24h": 0,
+            "denomExponent": 4,
+            "quoteExponent": 2,
+            "pricePrecision": 2,
+            "quantityPrecision": 4,
+            "sizeIncrement": "0.0001",
+            "priceIncrement": "0.01",
+            "minTradeQuantity": "0.0001",
+            "marketLocation": "US",
+            "marketLocations": [
+                "US"
+            ],
+            "marketType": "FUND",
+            "ep3InstrumentId": "YLDS-USDT-2F",
+            "exchangePrice": "1",
+            "proTradeAvailable": false,
+            "baseVolume24h": "0",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/uylds.fcc"
+            ],
+            "contractAddress": [
+                "uylds.fcc"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb",
+                "approved.ylds.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 100,
+            "orderLimits": {
+                "marketOrderProtectionBasisPoints": 100
+            },
+            "inRegularTradingHours": true,
+            "usesNasdaqSchedule": false,
+            "status": "OPEN"
+        },
+        {
+            "id": "FGRS-YLDS",
+            "symbol": "FGRS-YLDS",
+            "displayName": "FGRS-YLDS",
+            "denom": "FGRS",
+            "quoteDenom": "YLDS",
+            "bestBid": "39.57",
+            "bestAsk": "40.07",
+            "midMarketPrice": "39.82",
+            "priceChange24h": "0.120000000000000000",
+            "percentageChange24h": 0.003004,
+            "lastTradedPrice": "40.070000000000000000",
+            "volume24h": "97422.845800000000000000",
+            "high24h": "42.04",
+            "low24h": "37.48",
+            "indexPrice": "40.07",
+            "tradeCount24h": 1617,
+            "denomExponent": 4,
+            "quoteExponent": 2,
+            "pricePrecision": 2,
+            "quantityPrecision": 4,
+            "sizeIncrement": "0.0001",
+            "priceIncrement": "0.01",
+            "minTradeQuantity": "0.0001",
+            "askFee": {
+                "rate": 0.000300000,
+                "minBasisPoints": 3.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.000300000,
+                "maxBasisPoints": 3.000000000
+            },
+            "bidFee": {
+                "rate": 0.000300000,
+                "minBasisPoints": 3.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.000300000,
+                "maxBasisPoints": 3.000000000
+            },
+            "makerFee": {
+                "rate": 0.000300000,
+                "minBasisPoints": 3.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.000300000,
+                "maxBasisPoints": 3.000000000
+            },
+            "takerFee": {
+                "rate": 0.000300000,
+                "minBasisPoints": 3.000000000,
+                "minimumNotional": 0.000001,
+                "maximumRate": 0.000300000,
+                "maxBasisPoints": 3.000000000
+            },
+            "marketLocation": "US",
+            "marketLocations": [
+                "US",
+                "CAYMAN"
+            ],
+            "marketType": "ATS",
+            "ep3InstrumentId": "FGRS-YLDS",
+            "volumeWeightedAveragePrice": "39.98",
+            "exchangePrice": "40.04",
+            "proTradeAvailable": true,
+            "baseVolume24h": "2440.910000000000000000",
+            "contractAddressUrl": [
+                "https://zonescan.io/provenancetestnet/assets/nfigr.d"
+            ],
+            "contractAddress": [
+                "nfigr.d"
+            ],
+            "unifiedCryptoassetId": "unifiedCryptoAssetId",
+            "requiredAttributes": [
+                "figure.kyc.passport.pb",
+                "fsi.bd.pb"
+            ],
+            "marketOrderProtectionBasisPoints": 200,
+            "orderLimits": {
+                "minNotionalOrderValue": 1.000000,
+                "marketOrderProtectionBasisPoints": 200
+            },
+            "inRegularTradingHours": false,
+            "usesNasdaqSchedule": true,
+            "holidaySchedule": [
+                {
+                    "date": "2026-11-26",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2026-11-27",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "13:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2026-12-24",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "13:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2026-12-25",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-01-01",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-01-18",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-02-15",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-03-26",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-05-31",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-06-18",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-07-05",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "date": "2027-09-06",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                }
+            ],
+            "daySchedule": [
+                {
+                    "dayOfWeek": "MONDAY",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "16:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "dayOfWeek": "TUESDAY",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "16:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "dayOfWeek": "WEDNESDAY",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "16:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "dayOfWeek": "THURSDAY",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "16:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "dayOfWeek": "FRIDAY",
+                    "marketOpenTimes": [
+                        {
+                            "startTime": "09:30:00",
+                            "endTime": "16:00:00"
+                        }
+                    ],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "dayOfWeek": "SATURDAY",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                },
+                {
+                    "dayOfWeek": "SUNDAY",
+                    "marketOpenTimes": [],
+                    "timezone": "America/New_York"
+                }
+            ],
+            "status": "OPEN"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "size": 16,
+        "totalPages": 1,
+        "totalCount": 16
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "channelUuid": "7686d91f-1c1d-4d17-8cdf-fad8659f627f",
+    "midMarketPrice": "1.0599000",
+    "priceChange24h": "0.000000000000000000",
+    "percentageChange24h": 0,
+    "lastTradedPrice": "1.059900000100000000",
+    "volume24h": "242099.369104841718000000",
+    "high24h": "1.0599000",
+    "low24h": "1.0599000",
+    "indexPrice": "1.0599000",
+    "tradeCount24h": 1,
+    "exchangePrice": "1.059900000100000000",
+    "marketId": "FIGR_HELOC-USD",
+    "pricePrecision": 7,
+    "publishTime": "2026-10-02T10:34:44.48529169Z",
+    "inRegularTradingHours": true,
+    "status": "OPEN",
+    "channel": "MARKET"
+}

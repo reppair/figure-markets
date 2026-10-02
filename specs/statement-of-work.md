@@ -51,7 +51,7 @@ Public, unauthenticated and rate-limited. Use in line with the provider's terms 
 | UAT | `https://www.figuremarkets.dev/service-hft-exchange/api/v1` |
 | Production | `https://www.figuremarkets.com/service-hft-exchange/api/v1` |
 
-`GET /markets` returns `{ "data": Market[], "pagination": { "page", "size", "totalPages", "totalCount" } }`. Relevant market fields: `symbol`, `displayName`, `denom`, `quoteDenom`, `marketType`, `status`, `pricePrecision`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`.
+`GET /markets` returns `{ "data": Market[], "pagination": { "page", "size", "totalPages", "totalCount" } }`. Relevant market fields: `symbol`, `displayName`, `denom`, `quoteDenom`, `marketType`, `status`, `pricePrecision`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`. `bestBid` and `bestAsk` are present only for markets with an order book (4 of 16 on UAT). All 16 UAT markets fit on one page.
 
 ### WebSocket
 
@@ -72,12 +72,18 @@ Unsubscribe:
 { "action": "UNSUBSCRIBE", "channelUuid": "<uuid>" }
 ```
 
-Update message fields: `channelUuid`, `marketId`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`, `pricePrecision`, `publishTime`.
+Update message fields: `channelUuid`, `marketId`, `lastTradedPrice`, `bestBid`, `bestAsk`, `priceChange24h`, `percentageChange24h`, `high24h`, `low24h`, `volume24h`, `tradeCount24h`, `pricePrecision`, `publishTime`. `bestBid` and `bestAsk` are absent for markets without an order book. Messages also carry `midMarketPrice`, `indexPrice`, `exchangePrice`, `inRegularTradingHours`, `status` and `channel`, which the application ignores.
+
+Verified against UAT (captured fixtures under `tests/Fixtures/figure-markets/`):
+
+- `channelUuid` must be a UUID. Any other string is rejected.
+- Rejected messages get `{ "message": "Invalid request", "code": 1 }`.
+- A snapshot is sent after subscribing; an active market such as `HASH-USD` then updates about once per second.
 
 Connection rules:
 
 - A snapshot is sent immediately after subscribing, then updates only when market state changes.
-- The client must send a `PING` at least every 30 seconds.
+- The client must send a WebSocket ping frame (opcode 9) at least every 30 seconds; the server answers with a pong frame. Text messages such as `PING` or `{"action": "PING"}` are rejected.
 - Sessions are closed by the server after 30 minutes.
 - At most 50 channel subscriptions per connection.
 

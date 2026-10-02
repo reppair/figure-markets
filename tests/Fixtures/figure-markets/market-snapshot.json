@@ -1,0 +1,21 @@
+{
+    "channelUuid": "6c3a1c96-898d-4fe3-a48a-450c9f9fe3f0",
+    "bestBid": "0.020",
+    "bestAsk": "0.022",
+    "midMarketPrice": "0.021",
+    "priceChange24h": "0.000000000000000000",
+    "percentageChange24h": 0,
+    "lastTradedPrice": "0.020000000000000000",
+    "volume24h": "1447.909714000000000000",
+    "high24h": "0.025",
+    "low24h": "0.017",
+    "indexPrice": "0.020",
+    "tradeCount24h": 14025,
+    "exchangePrice": "0.021",
+    "marketId": "HASH-USD",
+    "pricePrecision": 3,
+    "publishTime": "2026-10-02T10:37:54.427234574Z",
+    "inRegularTradingHours": true,
+    "status": "OPEN",
+    "channel": "MARKET"
+}

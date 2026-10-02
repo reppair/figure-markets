@@ -6,6 +6,7 @@ Demo application showing real-time cryptocurrency market prices from the public 
 
 - [Statement of work](specs/statement-of-work.md): requirements, provider interface, acceptance criteria.
 - [Architecture](specs/architecture.md): design decisions, components, failure handling, testing priorities.
+- [Figure Markets API](docs/figure-markets-api.md): provider endpoints, verified WebSocket rules, configuration and test fixtures.
 
 ## Stack
 
@@ -51,7 +52,7 @@ The Figure Markets provider URLs live in `config/services.php` under `figure_mar
 composer run dev
 ```
 
-Starts the PHP server, queue worker, log tail and Vite dev server together.
+Starts the PHP server, queue worker, log tail, Vite dev server and the Reverb WebSocket server together.
 
 ## Quality checks
 

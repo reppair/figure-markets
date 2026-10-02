@@ -50,7 +50,7 @@ Scope `open()`. Factory for tests.
 - **`App\Services\FigureMarkets\RestClient`**: `Http` facade with timeout and retry. Base URL from `config('services.figure_markets.rest_url')`. `markets()` walks pagination.
 - **`App\Services\FigureMarkets\MarketPayload`**: the single normalizer. Maps a REST market record or a WebSocket update to `Market` attributes. The only class that knows provider field names.
 - **`App\Actions\SyncMarkets`**: REST → normalize → upsert by `symbol`, then mark markets absent from the response as `closed`. Never writes `price_updated_at`. Called by the `market:sync` command and the listener at start.
-- **`App\Console\Commands\ListenToMarkets`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own `channelUuid`, keep a `PING` timer under 30 seconds. On each message: normalize, skip if stale, upsert the row, then dispatch `MarketUpdated`. On close or error: reconnect with backoff and resubscribe. Registered with `DevCommands` so `composer run dev` starts it.
+- **`App\Console\Commands\ListenToMarkets`** (`market:listen`): sync, load open markets, connect, subscribe each symbol with its own UUID `channelUuid`, send a WebSocket ping frame every 20 seconds (the provider rejects text pings). On each message: normalize, skip if stale, upsert the row, then dispatch `MarketUpdated`. On close or error: reconnect with backoff and resubscribe. Registered with `DevCommands` so `composer run dev` starts it.
 
 Listener rules:
 
@@ -60,7 +60,7 @@ Listener rules:
 - **Logging**: connect, disconnect with reason, resubscribe count, skipped malformed and stale messages.
 - **Backoff**: 1s, 2s, 4s, doubling to a 30s cap, with ±20% jitter.
 - **Broadcast failure**: log and continue. The row is already updated, so the next page load is correct.
-- **Broadcast timeout**: broadcasting from the listener is a blocking HTTP call to Reverb inside the event loop. `broadcasting.connections.reverb.client_options` sets `connect_timeout` and `timeout` to 2 seconds so a slow or unreachable Reverb cannot starve the PING timer.
+- **Broadcast timeout**: broadcasting from the listener is a blocking HTTP call to Reverb inside the event loop. `broadcasting.connections.reverb.client_options` sets `connect_timeout` and `timeout` to 2 seconds so a slow or unreachable Reverb cannot starve the ping timer.
 
 ### Broadcasting (R5)
 
